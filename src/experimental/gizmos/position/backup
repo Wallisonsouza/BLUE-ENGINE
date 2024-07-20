@@ -1,0 +1,58 @@
+// import Component from "../base/base_component";
+// import BaseObject from "../base/base_entity";
+// import Transform from "./transfom";
+
+
+// let count = 0;
+
+// export default class GameObject extends BaseObject {
+//     public layer: number = 0;
+//     public active: boolean = true;
+//     public tag: string = "Untagged";
+//     public name: string;
+//     public transform: Transform = new Transform();
+//     private componentsMap: Map<string, Component[]> = new Map();
+
+//     constructor(name: string = `GameObject${count++}`) {
+//         super();
+//         this.name = name;
+
+//         console.log(`GameObject: ${name} created`);
+//     }
+
+//     public addInstance(componentInstance: Component): void {
+//         if (!this.componentsMap.has(componentInstance.constructor.name)) {
+//             this.componentsMap.set(componentInstance.constructor.name, []);
+//         }
+
+//         this.componentsMap.get(componentInstance.constructor.name)?.push(componentInstance);
+//     }
+
+//     public addComponent<T extends Component>(type: new () => T): T {
+//         const component = new type();
+//         this.addInstance(component);
+//         return component;
+//     }
+
+//     public getComponent<T extends Component>(type: new () => T): T | null {
+//         if (this.componentsMap.has(type.name)) {
+//             return this.componentsMap.get(type.name)![0] as T;
+//         }
+//         return null;
+//     }
+
+//     public getComponents<T extends Component>(type: new () => T): T[] | null {
+//         const instance  = new type();
+//         if (this.componentsMap.has(instance.constructor.name)) {
+//             return this.componentsMap.get(instance.constructor.name) as T[];
+//         }
+//         return null;
+      
+//     }
+
+//     public removeComponent<T extends Component>(type: new () => T): void {
+//         if (this.componentsMap.has(type.name)) {
+//             this.componentsMap.delete(type.name);
+//         }
+//     }
+// }
