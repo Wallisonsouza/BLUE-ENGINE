@@ -1,6 +1,7 @@
 import Vector2 from "../../vector2";
 import Mathf from "../static/Mathf";
 import Camera from "./Camera";
+import Transform from "./Transform";
 
 export default class Drawn {
 
@@ -43,25 +44,24 @@ export default class Drawn {
 
     public static square(
         _ctx: CanvasRenderingContext2D, 
-        position: Vector2, 
-        rotation: number, 
-        scale: Vector2, 
+        transform: Transform,
         fillColor: string, 
         strokeColor: string, 
         lineWidth: number, 
         borderRadius: { lt: number, lb: number, rt: number, rb: number }
     ) {
         _ctx.save();
-    
+        
+        const position = transform.getAdjustedPosition();
         // Move o contexto para a posição do canto superior esquerdo do quadrado
         _ctx.translate(position.x, position.y);
         
         // Rotaciona em torno do canto superior esquerdo do quadrado
-        _ctx.rotate(Mathf.degToRad(-rotation));
+        _ctx.rotate(Mathf.degToRad(-transform.rotation));
     
         // Tamanho do quadrado
-        const width = scale.x;
-        const height = scale.y;
+        const width = transform.size.x;
+        const height = transform.size.y;
         
         // Raio dos cantos arredondados
         const lt = borderRadius.lt;
@@ -88,6 +88,17 @@ export default class Drawn {
         _ctx.fill();
         _ctx.stroke();
         
+        _ctx.restore();
+
+        _ctx.save();
+        _ctx.save();
+        
+        _ctx.beginPath();
+        _ctx.arc(transform.position.x + transform.size.x * transform.origin.x , transform.position.y + transform.size.y * transform.origin.y, 5, 0, Math.PI * 2);
+        _ctx.fillStyle = "red";
+        _ctx.lineWidth = lineWidth;
+        
+        _ctx.fill();
         _ctx.restore();
     }
     

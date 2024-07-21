@@ -12,5 +12,3 @@ importer();
 ScryptManager.logics.forEach((logic) => {
     logic.start();
 });
-
-

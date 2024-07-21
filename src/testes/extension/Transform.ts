@@ -13,7 +13,7 @@ export default class Transform extends Component {
 
     private _position: Vector2 = Vector2.zero;
     private _rotation: number = 0;
-    private _origin: Vector2 = Vector2.zero; 
+    private _origin: Vector2 = new Vector2(0.5, 0.5); 
 
     public fillColor: string =  "white";
     
@@ -40,8 +40,8 @@ export default class Transform extends Component {
 
         //origem
      
-        const halfWidth = this.size.x * 0.0;
-        const halfHeight = this.size.y * 0.0;
+        const halfWidth = this.size.x * this._origin.x;
+        const halfHeight = this.size.y * this._origin.y;
 
         const rad = Mathf.degToRad(-this._rotation);
         const cos = Math.cos(rad);

@@ -1,5 +1,3 @@
-import { version } from "uuid";
-import Vector2 from "../../vector2";
 import Renderer from "../base/base_renderer";
 import Camera from "../extension/Camera";
 import Drawn from "../extension/Drawn";
@@ -19,9 +17,7 @@ export default class SquareRenderer extends Renderer {
        
         Drawn.square(
             _ctx,
-            this.transform.getAdjustedPosition(),
-            this.transform.rotation,
-            this.transform.size,
+            this.transform,
             this.fillColor,
             this.strokeColor,
             this.lineWidth,
