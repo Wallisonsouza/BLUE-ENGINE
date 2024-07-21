@@ -13,7 +13,7 @@ export default class Transform extends Component {
 
     private _position: Vector2 = Vector2.zero;
     private _rotation: number = 0;
-    private _origin: Vector2 = new Vector2(0.5, 0.5); 
+    private _origin: Vector2 = new Vector2(1, 1); 
 
     public fillColor: string =  "white";
     
@@ -51,8 +51,8 @@ export default class Transform extends Component {
         const offsetY = halfWidth * sin + halfHeight * cos;
 
         return new Vector2(
-            this._position.x + halfWidth - offsetX,
-            this._position.y + halfHeight - offsetY
+            this._position.x  - offsetX + halfWidth, 
+            this._position.y - offsetY + halfHeight
         );
     }
 

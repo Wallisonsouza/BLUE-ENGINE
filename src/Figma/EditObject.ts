@@ -16,6 +16,7 @@ export default class Editentity1ect extends Scrypt {
     private resizeLeft: boolean = false;
     private resizeRight: boolean = false;
     private resizeTop: boolean = false;
+    private resizeBottom: boolean = false;
     private inspector = document.getElementById("inspector") as HTMLDivElement;
 
     position: Vector2 = Vector2.zero;
@@ -31,12 +32,33 @@ export default class Editentity1ect extends Scrypt {
                 const adjustedPosition = this.par.transform.getAdjustedPosition();
                 const mouseXRelativeToObj = Input.mousePosition.x - adjustedPosition.x;
                 const mouseYRelativeToObj = Input.mousePosition.y - adjustedPosition.y;
+                
                 const mouseXRotated = mouseXRelativeToObj * Math.cos(angleInRadians) + mouseYRelativeToObj * Math.sin(angleInRadians);
                 const newWidth = mouseXRotated;
-                this.par.transform.size.x = Math.max(newWidth, 0);
-                const offsetX = (this.par.transform.size.x - newWidth) / 2;
-                this.par.transform.position.x += offsetX * Math.cos(angleInRadians);
-                this.par.transform.position.y += offsetX * Math.sin(angleInRadians);
+            
+                this.par.transform.size.x = newWidth;
+            
+                const adjustedPositionAfterResize = this.par.transform.getAdjustedPosition();
+                this.par.transform.position.x += adjustedPosition.x - adjustedPositionAfterResize.x;
+                this.par.transform.position.y += adjustedPosition.y - adjustedPositionAfterResize.y;
+            }
+
+            else if(this.resizeBottom){
+                const angleInRadians = -Mathf.degToRad(this.par.transform.rotation);
+                const adjustedPosition = this.par.transform.getAdjustedPosition();
+                const mouseXRelativeToObj = Input.mousePosition.x - adjustedPosition.x;
+                const mouseYRelativeToObj = Input.mousePosition.y - adjustedPosition.y;
+                
+                const mouseYRotated = mouseYRelativeToObj * Math.cos(angleInRadians) - mouseXRelativeToObj * Math.sin(angleInRadians);
+                const newWidth = mouseYRotated;
+            
+                this.par.transform.size.y = newWidth;
+            
+                const adjustedPositionAfterResize = this.par.transform.getAdjustedPosition();
+                this.par.transform.position.x += adjustedPosition.x - adjustedPositionAfterResize.x;
+                this.par.transform.position.y += adjustedPosition.y - adjustedPositionAfterResize.y;
+                
+                
             }
         }
 
@@ -44,6 +66,7 @@ export default class Editentity1ect extends Scrypt {
             this.resizeRight = false;
             this.resizeLeft = false;
             this.resizeTop = false;
+            this.resizeBottom = false;
         }
 
         if(Input.getKeyDown(KeyCode.E)){
@@ -83,13 +106,16 @@ export default class Editentity1ect extends Scrypt {
             switch(border){
                 case Border.inBorderLeft: 
                     this.resizeLeft = true;
-                break;
+                    break;
                 case Border.inBorderRight: 
                     this.resizeRight = true;
-                break;
+                    break;
                 case Border.inBorderTop: 
                     this.resizeTop = true;
-                break;
+                    break;
+                case Border.inBorderBottom: 
+                    this.resizeBottom = true;
+                    break;
             }
         }
        
