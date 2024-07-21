@@ -40,8 +40,8 @@ export default class Transform extends Component {
 
         //origem
      
-        const halfWidth = this.origin.x;
-        const halfHeight = this.origin.y;
+        const halfWidth = this.size.x * 0.0;
+        const halfHeight = this.size.y * 0.0;
 
         const rad = Mathf.degToRad(-this._rotation);
         const cos = Math.cos(rad);

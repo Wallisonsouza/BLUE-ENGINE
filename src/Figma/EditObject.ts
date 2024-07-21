@@ -27,35 +27,24 @@ export default class Editentity1ect extends Scrypt {
     public update(): void {
         if (Input.getMouseButton(0)) {
             if (this.resizeRight) {
-                const savedOrigin = this.par.transform.origin;
-                this.par.transform.origin = Vector2.zero;
                 const angleInRadians = -Mathf.degToRad(this.par.transform.rotation);
                 const adjustedPosition = this.par.transform.getAdjustedPosition();
                 const mouseXRelativeToObj = Input.mousePosition.x - adjustedPosition.x;
                 const mouseYRelativeToObj = Input.mousePosition.y - adjustedPosition.y;
                 const mouseXRotated = mouseXRelativeToObj * Math.cos(angleInRadians) + mouseYRelativeToObj * Math.sin(angleInRadians);
-                const newWidth = mouseXRotated + (this.par.transform.size.x / 2);
+                const newWidth = mouseXRotated;
                 this.par.transform.size.x = Math.max(newWidth, 0);
                 const offsetX = (this.par.transform.size.x - newWidth) / 2;
                 this.par.transform.position.x += offsetX * Math.cos(angleInRadians);
                 this.par.transform.position.y += offsetX * Math.sin(angleInRadians);
-                this.par.transform.origin = savedOrigin;
             }
         }
-
-       
-     
 
         if(Input.getMouseButtonUp(0)){
             this.resizeRight = false;
             this.resizeLeft = false;
             this.resizeTop = false;
         }
-
-
-
-
-
 
         if(Input.getKeyDown(KeyCode.E)){
             this.par.transform.rotation -= 5; 
@@ -64,8 +53,6 @@ export default class Editentity1ect extends Scrypt {
         if(Input.getKeyDown(KeyCode.Q)){
             this.par.transform.rotation += 5; 
         }
-        
-        
 
         if(Input.getKey(KeyCode.D)){
             this.par.transform.position .x += 1;
@@ -85,8 +72,6 @@ export default class Editentity1ect extends Scrypt {
 
         this.inspector.innerText = this.par.transform.toString();
         this.inspector.innerHTML += this.par.transform.html();
-
-     
     }
     
     public onCollisionStay(_data: CollisionData): void {

@@ -202,6 +202,10 @@ export  default class Vector2 {
         return new Vector2(0, 1);
     }
 
+    public static get center(){
+        return new Vector2(0.5, 0.5);
+    }
+
     public static normalize(v: Vector2) {
         const magnitude = v.magnitude();
         return new Vector2(v.x / magnitude, v.y / magnitude);
