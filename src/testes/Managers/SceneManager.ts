@@ -1,12 +1,11 @@
 import Scene from "../Scene";
-import { EngineMessages } from "../engine";
 
 
 /**
  * Gerencia as cenas dentro do motor de jogo, permitindo adicionar, remover, e trocar cenas.
  */
 export default class SceneManager {
-    private static _scenes: Array<Scene> = [];
+    private static _scenes: Scene[] = [];
     private static _currentScene: Scene | null = null;
 
     /**
@@ -14,8 +13,10 @@ export default class SceneManager {
      * @param scene A cena a ser adicionada.
      */
     public static addScene(scene: Scene): void {
-        if (!this._scenes.includes(scene)) this._scenes.push(scene);
-        this.setCurrentScene(scene);
+        if (!this._scenes.includes(scene)) {
+            this._scenes.push(scene);
+            this.setCurrentScene(scene);
+        } 
     }
 
     /**
@@ -78,7 +79,6 @@ export default class SceneManager {
     public static loadSceneByName(name: string): void {
         const scene = this.getSceneByName(name);
         if (scene === null) {
-            //Debug.es(EngineMessages.SCENE_MANAGER.NO_SCENE);
             return;
         }
         this.setCurrentScene(scene);

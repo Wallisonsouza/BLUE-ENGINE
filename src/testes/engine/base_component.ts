@@ -1,5 +1,5 @@
-import GameObject from "../extension/GameObject";
-import Transform from "../extension/Transform";
+import GameObject from "../components/GameObject";
+import Transform from "../components/Transform";
 
 export default class Component {
     

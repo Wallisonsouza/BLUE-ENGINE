@@ -1,6 +1,6 @@
-import Renderer from "../base/base_renderer";
-import Camera from "../extension/Camera";
-import Drawn from "../extension/Drawn";
+import Renderer from "../engine/base_renderer";
+import Camera from "../components/Camera";
+import Drawn from "../components/Drawn";
 
 
 export default class SquareRenderer extends Renderer {

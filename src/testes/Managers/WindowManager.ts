@@ -1,4 +1,4 @@
-import BaseWindow from "../base/base_window";
+import BaseWindow from "../engine/base_window";
 
 /**
  * Esta classe é responsável por gerenciar as janelas que podem ser renderizadas pela engine.

@@ -1,5 +1,5 @@
 import Vector2 from "../../vector2";
-import Collider from "../base/Collider";
+import Collider from "../engine/Collider";
 import Camera from "./Camera";
 import Collision from "./Collision";
 import Drawn from "./Drawn";
@@ -17,7 +17,7 @@ export default class MouseBorderCollider extends Collider {
 
         const collision = Collision.borderPoint(
           
-            new Vector2(x, y), rect.getAdjustedPosition(), rect.rotation, rect.size
+            new Vector2(x, y), rect.getRotatedPosition(), rect.getRadians(), rect.size
         );
 
         this.border = collision.border;
@@ -27,8 +27,8 @@ export default class MouseBorderCollider extends Collider {
     public override drawnCollider(_ctx: CanvasRenderingContext2D, _camera: Camera, transform: Transform): void {
         Drawn.drawnWireRect(
             _ctx,
-            transform.getAdjustedPosition(),
-            transform.rotation,
+            transform.getRotatedPosition(),
+            transform.getRadians(),
             transform.size,
             this.lineWidth,
             this.strokeColor
@@ -36,7 +36,6 @@ export default class MouseBorderCollider extends Collider {
     }   
 
 }
-
 
 export enum Border {
     none,

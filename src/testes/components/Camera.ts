@@ -1,4 +1,4 @@
-import Component from "../base/base_component";
+import Component from "../engine/base_component";
 import Mathf from "../static/Mathf";
 export default class Camera extends Component {
     public zoom: number = 1;

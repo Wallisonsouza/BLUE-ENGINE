@@ -1,4 +1,4 @@
-import GameObject from "../extension/GameObject";
+import GameObject from "../components/GameObject";
 import Collider from "./Collider";
 
 export default class CollisionData {

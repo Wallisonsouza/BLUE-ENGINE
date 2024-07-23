@@ -1,8 +1,15 @@
+import Vector2 from "../../vector2";
+
 export default class Mathf {
 
-    public static get PI(){
-        return Math.PI;
-    }
+    public static readonly INFINITY = Infinity;
+    public static readonly PI = Math.PI;
+    public static readonly PI2 = Math.PI * 2;
+    public static readonly PI_HALF = Math.PI / 2;
+    public static readonly PI_QUARTER = Math.PI / 4;
+    public static readonly RAD2DEG = 180 / Math.PI;
+    public static readonly DEG2RAD = Math.PI / 180;
+   
     public static abs(x: number): number {
         return Math.abs(x);
     }
@@ -108,28 +115,12 @@ export default class Mathf {
     public static cbrt(x: number): number {
         return Math.cbrt(x);
     }
-    public static oppositeDeg(angle: number) {
-        return (angle + 180) % 360;
-    }
-
-    public static oppositeRad(angle: number) {
-        return (angle + Math.PI) % (2 * Math.PI);
-    }
 
     public static angleBetweenTwoPoints(x1: number, y1: number, x2: number, y2: number) {
         return Math.atan2(y2 - y1, x2 - x1);
     }
 
-    /**
-     * Garante que o valor esteja dentro de um intervalo
-     * @param value - O valor a ser verificado 
-     * @param min - O valor mínimo
-     * @param max - O valor máximo 
-     * @returns - O valor dentro do intervalo
-     */
-    public static clamp(value: number, min: number, max: number) {
-        return Math.min(Math.max(value, min), max);
-    }
+   
 
     public static clampAngle(angle: number, min: number, max: number): number {
         const normalizedAngle = ((angle % 360) + 360) % 360;
@@ -143,7 +134,7 @@ export default class Mathf {
      * @returns - O valor convertido em graus
      */
     public static radToDeg(radians: number): number {
-        return radians * (180 / Math.PI);
+        return radians * this.RAD2DEG;
     }
 
     /**
@@ -152,40 +143,50 @@ export default class Mathf {
      * @returns - O valor convertido em radianos
      */
     public static degToRad(degrees: number): number {
-        return degrees * (Math.PI / 180);
+        return degrees * this.DEG2RAD;
     }
  
     public static toPercent(value: number){
         return value * 100;
     }
- 
-    public static rotateAround(x: number, y: number, angle: number, pivotX: number, pivotY: number) {
+    
+     /**
+     * Garante que o valor esteja dentro de um intervalo
+     * @param value - O valor a ser verificado 
+     * @param min - O valor mínimo
+     * @param max - O valor máximo 
+     * @returns - O valor dentro do intervalo
+     */
+     public static clamp(value: number, min: number, max: number) {
+        return Math.min(Math.max(value, min), max);
+    }
+    public static rotateAround(position: Vector2, pivot:Vector2, angle: number): Vector2 {
 
-        const rad = Mathf.degToRad(angle);
-        const sin = Mathf.sin(rad);
-        const cos = Mathf.cos(rad);
-        const dx = x - pivotX;
-        const dy = y - pivotY;
-        return {
-            x: dx * cos - dy * sin + pivotX,
-            y: dx * sin + dy * cos + pivotY
-        };
+        const sin = Mathf.sin(angle);
+        const cos = Mathf.cos(angle);
+        const dx = position.x - pivot.x;
+        const dy = position.y - pivot.y;
+
+        const rotatedX = dx * cos - dy * sin + pivot.x;
+        const rotatedY = dx * sin + dy * cos + pivot.y;
+
+        return new Vector2(rotatedX,  rotatedY);
     }
 
+    public static rotatePoint(point: Vector2, angle: number){
+        return new Vector2(
+            point.x * Math.cos(angle) - point.y * Math.sin(angle),
+            point.x * Math.sin(angle) + point.y * Math.cos(angle)
+        );
+    }
 
+    public static lerp(a: number, b: number, t: number): number {
+        return a + (b - a) * this.clamp01(t);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    public static clamp01(value: number): number {
+        return Mathf.clamp(value, 0, 1);
+    }
 
    
     public static distance(x1: number, y1: number, x2: number, y2: number): number {

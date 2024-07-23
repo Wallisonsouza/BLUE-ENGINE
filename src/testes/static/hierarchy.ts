@@ -1,5 +1,5 @@
-import Camera from "../extension/Camera";
-import GameObject from "../extension/GameObject";
+import Camera from "../components/Camera";
+import GameObject from "../components/GameObject";
 
 /**
  * Classe que representa a hierarquia de entidades
@@ -9,9 +9,6 @@ export default class Hierarchy {
 
     constructor() {
         this._entities = new Map<number, GameObject[]>();
-
-     
-        
     }
 
     public addGameObject(entity: GameObject): void {

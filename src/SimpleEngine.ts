@@ -1,5 +1,5 @@
 import Scene from "./testes/Scene";
-import EditorWindow from "./testes/base/editor_window";
+import EditorWindow from "./testes/engine/editor_window";
 import Engine from "./testes/engine";
 import WindowManager from "./testes/Managers/WindowManager";
 import SceneManager from "./testes/Managers/SceneManager";
@@ -16,14 +16,6 @@ export default class SimpleEngine extends  Engine {
     // cria a cena e adiciona ao gerenciador de cenas
     const scene1 = new Scene("scene1");
     SceneManager.addScene(scene1);
-
-    //cria a camera e adiciona a cena
-    CreateObject.camera();
-
-  
-    // // cria um triangulo e adiciona a cena
-    // const triangle = CreateObject.triangle();
-
     this.start();
   }
 }

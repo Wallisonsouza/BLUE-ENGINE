@@ -16,8 +16,8 @@ export default class Collision {
         const translatedY = point.y - position.y;
     
         // Aplica a rotação
-        const cos = Mathf.cos(Mathf.degToRad(-rotation));
-        const sin = Mathf.sin(Mathf.degToRad(-rotation));
+        const cos = Mathf.cos(rotation);
+        const sin = Mathf.sin(rotation);
 
         const rotatedX = translatedX * cos + translatedY * sin;
         const rotatedY = -translatedX * sin + translatedY * cos;
@@ -48,8 +48,9 @@ export default class Collision {
         const translatedY = point.y - position.y;
     
         // Aplica a rotação
-        const cos = Mathf.cos(Mathf.degToRad(-rotation));
-        const sin = Mathf.sin(Mathf.degToRad(-rotation));
+        const cos = Mathf.cos(rotation);
+        const sin = Mathf.sin(rotation);
+
     
         const rotatedX = translatedX * cos + translatedY * sin;
         const rotatedY = -translatedX * sin + translatedY * cos;

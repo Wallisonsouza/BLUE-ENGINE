@@ -1,15 +1,75 @@
 export  default class Vector2 {
 
+    public static readonly zero = new Vector2(0, 0);
+    public static readonly one = new Vector2(1, 1);
+    public static readonly right = new Vector2(1, 0);
+    public static readonly left = new Vector2(-1, 0);
+    public static readonly top = new Vector2(0, -1);
+    public static readonly bottom = new Vector2(0, 1);
+    public static readonly center = new Vector2(0.5, 0.5);
+
     public x: number;
     public y: number;
 
 
-    constructor(x: number , y: number) {
-        this.x = x;
-        this.y = y;
+    constructor(vector: Vector2);
+    constructor(x: number, y: number);
+    constructor(xOrVector: number | Vector2, y?: number) {
+        if (xOrVector instanceof Vector2) {
+            // Construtor com um argumento do tipo Vector2
+            this.x = xOrVector.x;
+            this.y = xOrVector.y;
+        } else {
+            // Construtor com dois argumentos: x e y
+            this.x = xOrVector;
+            this.y = y!;
+        }
     }
 
-    public some(vector: Vector2) {
+
+    public static subtract(v1: Vector2, v2: Vector2) {
+        return new Vector2(v1.x - v2.x, v1.y - v2.y);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     *  Soma dois vetores e atribui o resultado ao vetor atual.
+     * @param vector Vetor a ser incrementado.
+     */
+    public increment(vector: Vector2) {
         this.x += vector.x;
         this.y += vector.y;
        
@@ -122,11 +182,7 @@ export  default class Vector2 {
             this.x * Math.sin(rad) + this.y * Math.cos(rad)
         );
     }
-
-    // public rotateAround(angle: number, point: Vector2): Vector2 {
-    //     return this.subtract(point).rotate(angle).add(point);
-    // }
-
+ 
     public static rotatePoint(point: Vector2, angle: number): Vector2 {
         let rad = angle * Math.PI / 180; 
         return new Vector2(
@@ -148,64 +204,7 @@ export  default class Vector2 {
 
         return new Vector2(finalX, finalY);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Retorna um vetor com os valores 0, 0.
-     */
-    public static get zero() {
-        return new Vector2(0, 0);
-    }
-
-    /**
-     * Retorna um vetor com os valores 1, 1.
-     */
-    public static get one(){
-        return new Vector2(1, 1);
-    }
     
-    /**
-     * Retorna um vetor com os valores 1, 0.
-     */
-    public static get right(){
-        return new Vector2(1, 0);
-    }
-
-    /**
-     * Retorna um vetor com os valores -1, 0.
-     */
-    public static get left(){
-        return new Vector2(-1, 0);
-    }
-
-    /**
-     * Retorna um vetor com os valores 0, 1.
-     */
-    public static get top(){
-        return new Vector2(0, -1);
-    }
-
-    /**
-     * Retorna um vetor com os valores 0, -1.
-     */
-    public static get bottom(){
-        return new Vector2(0, 1);
-    }
-
-    public static get center(){
-        return new Vector2(0.5, 0.5);
-    }
-
     public static normalize(v: Vector2) {
         const magnitude = v.magnitude();
         return new Vector2(v.x / magnitude, v.y / magnitude);
@@ -223,7 +222,7 @@ export  default class Vector2 {
     }
 
     public toString(): string {
-        return `(${this.x.toFixed(2)}, ${this.y.toFixed(2)})`;
+        return `(${this.x}, ${this.y})`;
     }
     
 

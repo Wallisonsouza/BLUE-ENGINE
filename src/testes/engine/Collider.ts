@@ -1,8 +1,8 @@
-import Color from "../static/color";
+import Color from "../Obsolet/color";
 import Vector2 from "../../vector2";
 import Component from "./base_component";
-import Camera from "../extension/Camera";
-import Transform from "../extension/Transform";
+import Camera from "../components/Camera";
+import Transform from "../components/Transform";
 
 export default class Collider extends Component {
 

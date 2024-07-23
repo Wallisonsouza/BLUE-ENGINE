@@ -1,4 +1,4 @@
-import Camera from "../extension/Camera";
+import Camera from "../components/Camera";
 import Component from "./base_component";
 
 export default class Renderer extends Component {

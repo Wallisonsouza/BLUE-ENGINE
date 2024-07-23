@@ -1,8 +1,8 @@
 import SceneManager from "../Managers/SceneManager";
-import Camera from "../extension/Camera";
-import MouseCollider from "../extension/ColliderMouse";
-import GameObject from "../extension/GameObject";
-import MouseBorderCollider from "../extension/mouseBorderCollider";
+import Camera from "../components/Camera";
+import MouseCollider from "../components/ColliderMouse";
+import GameObject from "../components/GameObject";
+import MouseBorderCollider from "../components/mouseBorderCollider";
 import SquareRenderer from "../renderer/SquareRenderer";
 
 export default class CreateObject {
@@ -29,8 +29,9 @@ export default class CreateObject {
         squareRenderer.fillColor = color;
   
         scene?.hierarchy.addGameObject(object);
-        object.addComponent(MouseCollider);
         object.addComponent(MouseBorderCollider);
+        object.addComponent(MouseCollider);
+      
         return object;
     }
   

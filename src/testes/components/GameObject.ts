@@ -1,5 +1,5 @@
-import Component from "../base/base_component";
-import BaseObject from "../base/base_entity";
+import Component from "../engine/base_component";
+import BaseObject from "../engine/base_entity";
 import { IGameObject } from "./IGameObject";
 import List from "./List";
 import Transform from "./Transform";

@@ -1,4 +1,4 @@
-import Scrypt from "../testes/base/base_mono";
+import Scrypt from "./engine/base_mono";
 
 export class ScryptManager {
 
