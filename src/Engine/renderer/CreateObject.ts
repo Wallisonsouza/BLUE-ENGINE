@@ -1,0 +1,33 @@
+import SceneManager from "../Managers/SceneManager";
+import Camera from "../components/Camera";
+import GameObject from "../components/GameObject";
+import ImageRenderer from "./ImageRenderer";
+import SquareRenderer from "./SquareRenderer";
+
+export default class CreateObject {
+
+    public static camera(): GameObject {
+
+        const scene = SceneManager.getCurrentScene();
+        const object = new GameObject();
+        object.name = "Camera";
+        const camera = object.addComponent(Camera);
+        camera.gameObject = object;
+        scene?.hierarchy.addGameObject(object);
+        return object;
+    }
+
+    public static square(color: string = "white"): GameObject {
+        
+        const scene = SceneManager.getCurrentScene();
+        const object = new GameObject();
+        object.name = "Square";
+
+        
+        const squareRenderer = object.addComponent(SquareRenderer);
+        squareRenderer.fillColor = color;
+        scene?.hierarchy.addGameObject(object);
+        return object;
+    }
+  
+}

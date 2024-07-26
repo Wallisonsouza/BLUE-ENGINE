@@ -1,107 +1,179 @@
-import Scrypt from "../testes/engine/base_mono";
-import CreateObject from "../testes/Object/CreateObject";
-import GameObject from "../testes/components/GameObject";
-import Mathf from "../testes/static/Mathf";
-import CollisionData from "../testes/engine/data_collision";
-import MouseBorderCollider, { Border } from "../testes/components/mouseBorderCollider";
-import Vector2 from "../vector2";
-import Transform from "../testes/components/Transform";
-import MouseCollider from "../testes/components/ColliderMouse";
-import Input from "../testes/static/input";
+import Rect from "../Engine/components/Rect";
+import GameObject from "../Engine/components/GameObject";
+import Scrypt from "../Engine/engine/base_mono";
+import Input from "../Engine/Input/Input";
+import CreateObject from "../Engine/renderer/CreateObject";
+import Mathf from "../Engine/static/Mathf";
+import { EKey } from "../Engine/Input/EKey";
+import Drawn from "../Engine/components/Drawn";
+import { VisualRect } from "./VisualRect";
+
+export default class EditEntity extends Scrypt {
+
+    private targetObject!: GameObject;
+    private inspectorElement: HTMLDivElement;
+    private textElement: HTMLDivElement;
+    private isDragging: boolean = false;
+
+    private right: boolean = false;
+    private left: boolean = false;
+    private top: boolean = false;
+    private bottom: boolean = false;
 
 
-export default class Editentity1ect extends Scrypt {
+    private updateRect: Rect;
 
-    private par!: GameObject;
-    
-    private border: Border = Border.none;
-    private inspector = document.getElementById("inspector") as HTMLDivElement;
-    private text = document.getElementById("textarea") as HTMLDivElement;
-
-    //offsets
-    position: Vector2 = Vector2.zero;
-    rotation: number = 0;
-    rotationOffset: number = 15;
-    private draggin: boolean = false;
-
-    public start(): void {
-        this.par = CreateObject.square();
-        this.par.transform.zIndex = 999;
-        this.position = this.par.transform.getRotatedPosition();
-        this.rotation = this.par.transform.getDegrees();
+    constructor() {
+        super();
     }
-    
-    public update(_deltaTime: number): void {
 
-      
-        if (Input.getMouseButton(0)) {
+    public override start(): void {
+        this.initializeTargetObject();
+    }
 
-            switch(this.border) {
-                case Border.inBorderRight:
-                    this.resizeRight(this.par.transform);
-                    break;
-                case Border.inBorderBottom:
-                    this.resizeBottom(this.par.transform);
-                    break;
-            }
-        }
-
-        if(Input.getMouseButtonUp(0)){
-            this.border = Border.none;
-            this.draggin = false;
-        }
-       
-        this.text.innerText = this.par.transform.toString();
-        this.inspector.innerHTML = this.par.transform.html();
-
-        if(this.draggin){
-            this.par.transform.setPosition(Input.getMousePosition().subtract(this.par.transform.size.multiplyScalar(0.5)));
+    public override update(deltaTime: number): void {
+        const mousePosition = Input.mousePosition;
+        const rotatedPos = this.targetObject.rect.rotatedPosition;
+        const border = this.checkBorder(mousePosition.x, mousePosition.y, rotatedPos.x, rotatedPos.y, this.targetObject.rect.width, this.targetObject.rect.height, this.targetObject.rect.rotation, 15);
         
+        this.handleMouseInput(border);
+        this.handleKeyInput();
+
+        if (this.isDragging && !this.right && !this.left && !this.top && !this.bottom) {
+            const delta = Input.mouseDelta;
+            this.targetObject.rect.x += delta.x;
+            this.targetObject.rect.y += delta.y;
+        }
+
+        if(this.updateRect) {
+          VisualRect.updateValues(this.updateRect);
         }
     }
-    
 
-    private resizeRight(transform: Transform) {
-        const angleInRadians = transform.getRadians();
-        const position = transform.getRotatedPosition();
-        const mousePosition = Input.getMousePosition();
-        const mouseRelative = Vector2.subtract(mousePosition, position);
-        let mouseXRotated = Mathf.rotatePoint(mouseRelative, -angleInRadians).x;
-        mouseXRotated = Mathf.clamp(mouseXRotated, 0, Mathf.INFINITY);
-        transform.size.x = mouseXRotated;
-        const positionAfterResize = transform.getRotatedPosition();
-        const newPos = transform.getPosition();
-        newPos.increment(position.subtract(positionAfterResize));
-        transform.setPosition(newPos);
+    private initializeTargetObject(): void {
+        this.targetObject = CreateObject.square();
+        this.targetObject.rect.index = 999;
     }
 
-    private resizeBottom(transform: Transform) {
-        const position = transform.getRotatedPosition();
-        const angleInRadians = transform.getRadians();
-     
-        const mouseRelative = Input.getMousePosition().subtract(position);
-        let mouseYRotated = Mathf.rotatePoint(mouseRelative, -angleInRadians).y;
-        mouseYRotated = Mathf.clamp(mouseYRotated, 0, Mathf.INFINITY);
-        transform.size.y = mouseYRotated;
-        const positionAfterResize = transform.getRotatedPosition();
-        const newPos = transform.getPosition();
-        newPos.increment(position.subtract(positionAfterResize));
-        transform.setPosition(newPos);
+    private handleMouseInput(border: any): void {
+        if (border.onRightEdge && Input.getMouseButtonDown(0)) {
+            this.right = true;
+        }
+        if (border.onLeftEdge && Input.getMouseButtonDown(0)) {
+            this.left = true;
+        }
+        if (border.onTopEdge && Input.getMouseButtonDown(0)) {
+            this.top = true;
+        }
+        if (border.onBottomEdge && Input.getMouseButtonDown(0)) {
+            this.bottom = true;
+        }
+
+        const delta = Input.mouseDelta;
+        const rotatedMouse = Mathf.rotatePoint(delta.x, delta.y, -this.targetObject.rect.rotation);
+
+        if (this.right && Input.getMouseButton(0)) {
+            this.resizeRight(this.targetObject.rect, rotatedMouse.x);
+        }
+        if (this.left && Input.getMouseButton(0)) {
+            this.resizeLeft(this.targetObject.rect, rotatedMouse.x);
+        }
+        if (this.top && Input.getMouseButton(0)) {
+            this.resizeTop(this.targetObject.rect, rotatedMouse.y);
+        }
+        if (this.bottom && Input.getMouseButton(0)) {
+            this.resizeBottom(this.targetObject.rect, rotatedMouse.y);
+        }
+
+        if (Input.getMouseButtonUp(0)) {
+            this.isDragging = false;
+            this.right = false;
+            this.left = false;
+            this.top = false;
+            this.bottom = false;
+        }
     }
 
-    public onCollisionStay(_data: CollisionData): void {
+    private handleKeyInput(): void {
+        if (Input.getKey(EKey.Q)) { 
+            this.targetObject.rect.rotation -= 1;
+        }
+        if (Input.getKey(EKey.E)) { 
+            this.targetObject.rect.rotation += 1;
+        }
+    }
+
+    private resizeLeft(rect: Rect, value: number): void {
+        const positionBefore = rect.rotatedPosition;
+        rect.width -= value;
+        const positionAfter = rect.rotatedPosition;
+
+        rect.x += positionAfter.x - positionBefore.x;
+        rect.y += positionAfter.y - positionBefore.y;
+        rect.x += value;
+    }
+
+    private resizeRight(rect: Rect, value: number): void {
+        const positionBefore = rect.rotatedPosition;
+        rect.width += value;
+        const positionAfter = rect.rotatedPosition;
+        rect.x -= positionAfter.x - positionBefore.x;
+        rect.y -= positionAfter.y - positionBefore.y;
+    }
+
+    private resizeTop(rect: Rect, value: number): void {
+        const positionBefore = rect.rotatedPosition;
+        rect.height -= value;
+        const positionAfter = rect.rotatedPosition;
+        rect.y += value;
+        rect.x += positionAfter.x - positionBefore.x;
+        rect.y += positionAfter.y - positionBefore.y;
+    }
+
+    private resizeBottom(rect: Rect, value: number): void {
+        const positionBefore = rect.rotatedPosition;
+        rect.height += value;
+        const positionAfter = rect.rotatedPosition;
+        rect.y -= positionAfter.y - positionBefore.y;
+        rect.x -= positionAfter.x - positionBefore.x;
+    }
+
+    private checkBorder(mouseX: number, mouseY: number, x: number, y: number, width: number, height: number, rotation: number, offset: number) {
+        const translatedPositionX = mouseX - x;
+        const translatedPositionY = mouseY - y;
+        const rotatedPosition = Mathf.rotatePoint(translatedPositionX, translatedPositionY, -rotation); 
+        const finalPositionX = x + rotatedPosition.x;
+        const finalPositionY = y + rotatedPosition.y;
+
+        const left = x - offset;
+        const right = x + width + offset;
+        const top = y - offset;
+        const bottom = y + height + offset;
         
-        if(_data.collider instanceof MouseBorderCollider ) {
-            if(_data.collider.border === Border.none || Input.getMouseButtonDown(0)) {
-                this.border = _data.collider.border;
-            }
+        const onLeftEdge = finalPositionX >= left && finalPositionX <= x + offset && finalPositionY >= y && finalPositionY <= bottom;
+        const onRightEdge = finalPositionX <= right && finalPositionX >= x + width - offset && finalPositionY >= y && finalPositionY <= bottom;
+        const onTopEdge = finalPositionY >= top && finalPositionY <= y + offset && finalPositionX >= x && finalPositionX <= right;
+        const onBottomEdge = finalPositionY <= bottom && finalPositionY >= y + height - offset && finalPositionX >= x && finalPositionX <= right;
+
+        this.targetObject.rect.fill = (onLeftEdge || onRightEdge || onTopEdge || onBottomEdge) ? "red" : "white";
+
+        return {
+            onLeftEdge,
+            onRightEdge,
+            onTopEdge,
+            onBottomEdge
+        };
+    }
+
+    public onMouseStay(entity: GameObject): void {
+        if(Input.getMouseButton(0)) {
+            this.isDragging = true;
+          
         }
 
-        else if(_data.collider instanceof MouseCollider) {
-            if(Input.getMouseButtonDown(0)) {
-                this.draggin = true;
-            }
-           
+        if(Input.getMouseButtonDown(0)) {
+            this.updateRect = entity.rect;
+            VisualRect.setRect(entity.rect);
         }
     }
 }

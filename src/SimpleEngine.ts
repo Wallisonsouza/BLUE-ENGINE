@@ -1,17 +1,11 @@
-import Scene from "./testes/Scene";
-import EditorWindow from "./testes/engine/editor_window";
-import Engine from "./testes/engine";
-import WindowManager from "./testes/Managers/WindowManager";
-import SceneManager from "./testes/Managers/SceneManager";
-import CreateObject from "./testes/Object/CreateObject";
+import Engine from "./Engine/engine";
+import SceneManager from "./Engine/Managers/SceneManager";
+import Scene from "./Engine/Scene";
+
 
 export default class SimpleEngine extends  Engine {
   constructor() {
     super();
-  
-    // cria a janela do editor onde sera renderizado o jogo
-    const editor = new EditorWindow();
-    WindowManager.addWindow(editor);
 
     // cria a cena e adiciona ao gerenciador de cenas
     const scene1 = new Scene("scene1");

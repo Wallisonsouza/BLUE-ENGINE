@@ -1,3 +1,5 @@
+import Mathf from "./Engine/static/Mathf";
+
 export  default class Vector2 {
 
     public static readonly zero = new Vector2(0, 0);
@@ -7,6 +9,9 @@ export  default class Vector2 {
     public static readonly top = new Vector2(0, -1);
     public static readonly bottom = new Vector2(0, 1);
     public static readonly center = new Vector2(0.5, 0.5);
+    public static readonly up = new Vector2(0, -1);
+    public static readonly down = new Vector2(0, 1);
+
 
     public x: number;
     public y: number;
@@ -29,6 +34,22 @@ export  default class Vector2 {
 
     public static subtract(v1: Vector2, v2: Vector2) {
         return new Vector2(v1.x - v2.x, v1.y - v2.y);
+    }
+
+    public static multiply(v1: Vector2, v2: Vector2) {
+        return new Vector2(v1.x * v2.x, v1.y * v2.y);
+    }
+
+    public static divide(v1: Vector2, v2: Vector2) {
+        return new Vector2(v1.x / v2.x, v1.y / v2.y);
+    }
+
+    public static rotate(v: Vector2, angle: number): Vector2 {
+        let rad = Mathf.degToRad(angle);
+        return new Vector2(
+            v.x * Math.cos(rad) - v.y * Math.sin(rad),
+            v.x * Math.sin(rad) + v.y * Math.cos(rad)
+        );
     }
 
 
@@ -73,6 +94,11 @@ export  default class Vector2 {
         this.x += vector.x;
         this.y += vector.y;
        
+    }
+
+    public decrement(vector: Vector2) {
+        this.x -= vector.x;
+        this.y -= vector.y;
     }
 
     public add(vector: Vector2) {
