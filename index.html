@@ -1,117 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    <title>Vite + TS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resizable Rectangle</title>
     <style>
-        * {
+        *{
             box-sizing: border-box;
         }
 
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
+        body{
+            width: 100%;
             height: 100vh;
-            overflow: hidden;
-        }
-
-        #inspector {
-            width: 240px;
-            height: 100%;
-            position: absolute;
-            background-color: antiquewhite;
-            right: 0;
-            top: 0;
-            z-index: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
-      
-
-        canvas {
-            width: 100%;
-            height: 100vh; /* Adjust height considering textarea */
-            background-color: rgb(31, 31, 31);
-            z-index: 0;
-        }
-
-        form {
-            display: none;
-            flex-wrap: wrap;
             margin: 0;
             padding: 0;
+            border: 0;
+            display: flex;
         }
-
-        .form-group {
-          margin-right: 10px;
-          margin-bottom: 10px;
-          display: flex;
-          align-items: center;
-          flex-direction: row;
-          font-family: monospace;
-        }
-
-        label {
-            margin-right: 5px;
-        }
-
-        input[type="number"] {
+    
+        #canvas {
             width: 100%;
-            padding: 5px;
-            outline: none;
-            border: 1px solid #ccc;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background-color: black;
+            height: 100%;
         }
     </style>
 </head>
 <body>
-    <div id="inspector">
-        <form id="rectForm">
-            <div class="form-group">
-                <label for="posX">X:</label>
-                <input type="number" id="posX" name="posX" required>
-                <label for="posY">Y:</label>
-                <input type="number" id="posY" name="posY" required>
-            </div>
-           
-            <div class="form-group">
-              <label for="width">W:</label>
-                <input type="number" id="width" name="width" required min="0">
-                <label for="height">H:</label>
-                <input type="number" id="height" name="height" required min="0">
-            </div>
-            <div class="form-group">
-              <label for="originX">OX:</label>
-              <input type="number" id="originX" name="originX" required min="0" max="1" step="0.1">
-              <label for="originY">OY:</label>
-              <input type="number" id="originY" name="originY" required min="0" max="1" step="0.1">
-          </div>
-             <div class="form-group">
-                <label for="rotation">R:</label>
-                <input type="number" id="rotation" name="rotation">
-            </div>
-            <div class="form-group">
-                <label for="borderTop">Borda Superior:</label>
-                <input type="number" id="borderTop" name="borderTop" min="0">
-            </div>
-            <div class="form-group">
-                <label for="borderLeft">Borda Esquerda:</label>
-                <input type="number" id="borderLeft" name="borderLeft" min="0">
-            </div>
-            <div class="form-group">
-                <label for="borderRight">Borda Direita:</label>
-                <input type="number" id="borderRight" name="borderRight" min="0">
-            </div>
-            <div class="form-group">
-                <label for="borderBottom">Borda Inferior:</label>
-                <input type="number" id="borderBottom" name="borderBottom" min="0">
-            </div>
-        </form>
-    </div>
-    <script type="module" src="/src/main.ts"></script>
     <canvas id="canvas"></canvas>
+    <div id="inspector">
+        <div id="inspector-handle"> </div>
+        <div class="inspector-content">
+            <div class="inspector-line-group">
+                <div class="input-title">X</div>
+                <input type="number" name="position-x" id="position-x">
+                <div class="input-title">Y</div>
+                <input type="number" name="position-y" id="position-y">
+            </div>
+            <div class="inspector-line-group">
+                <div class="input-title">W</div>
+                <input type="number" name="position-x" id="position-x">
+                <div class="input-title">H</div>
+                <input type="number" name="position-y" id="position-y">
+            </div>
+        </div>
+    </div>
+
+    <script src="./src/main.ts" type="module"></script>
+
 </body>
 </html>

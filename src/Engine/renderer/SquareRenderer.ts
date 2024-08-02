@@ -1,6 +1,6 @@
 import Renderer from "../engine/base_renderer";
 import Camera from "../components/Camera";
-import Drawn from "../components/Drawn";
+import Draw from "../components/Draw";
 
 
 export default class SquareRenderer extends Renderer {
@@ -15,7 +15,7 @@ export default class SquareRenderer extends Renderer {
     override render(_ctx: CanvasRenderingContext2D, _camera: Camera): void {
 
         
-        Drawn.drawnRect(
+        Draw.drawnRect(
             _ctx,
             this.rect.rotatedPosition.x,
             this.rect.rotatedPosition.y,

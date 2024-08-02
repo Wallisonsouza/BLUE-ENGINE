@@ -1,6 +1,6 @@
 import Mathf from "../static/Mathf";
 
-export default class Drawn {
+export default class Draw {
 
     public static drawnWireRect(
         _ctx: CanvasRenderingContext2D,
@@ -58,11 +58,11 @@ export default class Drawn {
         _ctx.translate(x, y);
         _ctx.rotate(Mathf.degToRad(rotation));
     
-        const lt = Mathf.clamp(borderRadius.lt, 0, Math.min(height / 2, width / 2));
-        const lb = Mathf.clamp(borderRadius.lb, 0, Math.min(height / 2, width / 2));
-        const rt = Mathf.clamp(borderRadius.rt, 0, Math.min(height / 2, width / 2));
-        const rb = Mathf.clamp(borderRadius.rb, 0, Math.min(height / 2, width / 2));
-    
+        const lt = Math.max(0, Math.min(borderRadius.lt, Math.min(height / 2, width / 2)));
+        const lb = Math.max(0, Math.min(borderRadius.lb, Math.min(height / 2, width / 2)));
+        const rt = Math.max(0, Math.min(borderRadius.rt, Math.min(height / 2, width / 2)));
+        const rb = Math.max(0, Math.min(borderRadius.rb, Math.min(height / 2, width / 2)));
+        
         _ctx.beginPath();
         
         _ctx.moveTo(lt, 0);

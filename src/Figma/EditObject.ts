@@ -5,9 +5,6 @@ import Input from "../Engine/Input/Input";
 import CreateObject from "../Engine/renderer/CreateObject";
 import Mathf from "../Engine/static/Mathf";
 import { EKey } from "../Engine/Input/EKey";
-import Drawn from "../Engine/components/Drawn";
-import { VisualRect } from "./VisualRect";
-
 export default class EditEntity extends Scrypt {
 
     private targetObject!: GameObject;
@@ -46,7 +43,7 @@ export default class EditEntity extends Scrypt {
         }
 
         if(this.updateRect) {
-          VisualRect.updateValues(this.updateRect);
+        
         }
     }
 
@@ -173,7 +170,6 @@ export default class EditEntity extends Scrypt {
 
         if(Input.getMouseButtonDown(0)) {
             this.updateRect = entity.rect;
-            VisualRect.setRect(entity.rect);
         }
     }
 }

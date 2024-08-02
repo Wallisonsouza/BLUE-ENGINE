@@ -1,5 +1,5 @@
 import Camera from "../components/Camera";
-import Drawn from "../components/Drawn";
+import Draw from "../components/Draw";
 import Renderer from "../engine/base_renderer";
 
 export default class ImageRenderer extends Renderer {
