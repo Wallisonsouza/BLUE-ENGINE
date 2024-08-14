@@ -1,50 +1,33 @@
-import RendererManager from "./Engine/Managers/RendererManager";
-import SimpleEngine from "./SimpleEngine";
+import Engine from "./Engine/engine";
 import "./Style/style.css";
 
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-function resizeCanvas(){
-    canvas.width = canvas.getBoundingClientRect().width;
-    canvas.height = canvas.getBoundingClientRect().height;
-}
-resizeCanvas();
 
-window.addEventListener("resize", (e) => {
-   resizeCanvas();
-});
-
-
-let engine = new SimpleEngine(ctx);
+const engine = new Engine(canvas);
 engine.start();
 
+window.addEventListener("wheel", (event) => {
 
-const inspectorHandle = document.getElementById("inspector-handle") as HTMLDivElement;
-const inspector = document.getElementById("inspector") as HTMLDivElement;
-
-let isResizing = false;
-let originalWidth = 0;
-
-inspectorHandle.addEventListener("mousedown", (e) => {
-
-    if(e.button !== 0) return;
-    isResizing = true;
-
-    const rect = inspector.getBoundingClientRect();
-    originalWidth = rect.width;
-    e.preventDefault();
-});
-
-document.addEventListener("mousemove", (e) => {
-    if(isResizing) {
-        originalWidth -= e.movementX;
-        inspector.style.width = `${originalWidth}px`;
-        resizeCanvas();
+    if(event.ctrlKey) {
+        event.preventDefault();
     }
+    
+}, {passive: false});
+
+window.addEventListener("gesturestart", function(event) {
+    event.preventDefault();
 });
 
-document.addEventListener("mouseup", (e) => {
-    isResizing = false;
+window.addEventListener("gesturechange", function(event) {
+    event.preventDefault();
 });
+
+window.addEventListener("gesture", function(event) {
+    event.preventDefault();
+});
+
+window.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+})
 

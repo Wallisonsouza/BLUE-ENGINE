@@ -14,20 +14,6 @@ export default class ImageRenderer extends Renderer {
             this.rect.width = this.image.width;
             this.rect.height = this.image.height;
         };
-
-        // const imageInput = document.getElementById("image-input") as HTMLInputElement;
-        // imageInput.addEventListener("change", (e) => {
-        //     const target = e.target as HTMLInputElement;
-        //     const file = target.files?.item(0);
-        //     if (file) {
-        //         const reader = new FileReader();
-        //         reader.onload = (e) => {
-        //             const target = e.target as FileReader;
-        //             this.setImageSource(target.result as string);
-        //         };
-        //         reader.readAsDataURL(file);
-        //     }
-        // });
     }
 
     public setImageSource(source: string): void {
@@ -35,12 +21,13 @@ export default class ImageRenderer extends Renderer {
         this.image.src = source;
     }
 
-    override render(_ctx: CanvasRenderingContext2D, _camera: Camera): void {
+    override render(context: CanvasRenderingContext2D): void {
         Draw.drawImage(
-            _ctx,
+            context,
             this.image,
             this.rect.width,
             this.rect.height,
+            "stretch"
         );
     }
 }

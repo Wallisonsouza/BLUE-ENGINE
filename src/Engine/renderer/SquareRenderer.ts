@@ -12,13 +12,18 @@ export default class SquareRenderer extends Renderer {
         rt: 20
     }
 
-    override render(_ctx: CanvasRenderingContext2D, _camera: Camera): void {
-        Draw.drawnRect(
-            _ctx,
-            this.rect.width,
-            this.rect.height,
-            this.fillColor,
-            this.borderRadius
-        );
+    override render(_ctx: CanvasRenderingContext2D): void {
+        // Draw.drawRect(
+        //     _ctx,
+        //     this.rect.width,
+        //     this.rect.height,
+        //     this.fillColor,
+        //     this.borderRadius
+        // );
+        Draw.drawPath(_ctx, this.rect.getPath())
+    }
+
+    override toString(){
+      return `SquareRenderer`
     }
 }

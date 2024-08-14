@@ -6,5 +6,5 @@ export default class Renderer extends Component {
     public strokeColor: string = "rgba(0, 0, 0, 1)";
     public lineWidth: number = 0;
   
-   public render(_ctx: CanvasRenderingContext2D, _camera: Camera): void{};
+   public render(context: CanvasRenderingContext2D): void{}
 }

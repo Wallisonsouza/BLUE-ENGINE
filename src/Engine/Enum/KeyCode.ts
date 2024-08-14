@@ -1,4 +1,4 @@
-export enum EKey {
+export enum KeyCode {
     Backspace = "Backspace",
     Tab = "Tab",
     Enter = "Enter",
@@ -73,4 +73,6 @@ export enum EKey {
     ScrollLock = "ScrollLock",
     Semicolon = ";",
     Equal = "=",
+    ShiftLeft = "Shift",
+    
 }

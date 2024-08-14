@@ -1,5 +1,4 @@
 import Scrypt from "../engine/base_mono";
-import Input from "../Input/Input";
 
 export default class ScryptManager {
 
@@ -22,11 +21,22 @@ export default class ScryptManager {
         this.scrypts.forEach(scrypt => {scrypt.start();});
     }
 
-    public static update(deltaTime: number): void {
-        this.scrypts.forEach(scrypt => {scrypt.update(deltaTime);});
-    }
-
     public static fixedUpdate(): void {
         this.scrypts.forEach(scrypt => {scrypt.fixedUpdate();});
+    }
+
+    public static update(): void {
+        this.scrypts.forEach(scrypt => {scrypt.update();});
+    }
+
+    public static lateUpdate(): void {
+        this.scrypts.forEach(scrypt => {scrypt.lateUpdate();});
+    }
+
+    public static onDrawGizmos(): void {
+        this.scrypts.forEach(scrypt => {scrypt.onDrawGizmos();});
+    }
+    public static onGUI(): void {
+        this.scrypts.forEach(scrypt => {scrypt.onGUI();});
     }
 }

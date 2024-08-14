@@ -1,8 +1,8 @@
 import SceneManager from "../Managers/SceneManager";
 import Camera from "../components/Camera";
 import GameObject from "../components/GameObject";
-import ImageRenderer from "./ImageRenderer";
-import SquareRenderer from "./SquareRenderer";
+import ImageRenderer from "../renderer/ImageRenderer";
+import SquareRenderer from "../renderer/SquareRenderer";
 
 export default class CreateObject {
 
@@ -26,7 +26,7 @@ export default class CreateObject {
         return object;
     }
 
-    public static image(src: string = "src/Assets/Images/no-image.jpeg"){
+    public static image(src: string = "src/Assets/Images/no-image.svg"){
         const scene = SceneManager.getCurrentScene();
         const object = new GameObject();
         object.name = "New Image";

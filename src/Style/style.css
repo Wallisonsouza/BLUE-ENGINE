@@ -11,7 +11,8 @@
 #hierarchy{
     width: 240px;
     height: 100%;
-    background-color: rgb(12, 13, 24);     
+    background-color: rgb(12, 13, 24);  
+    display: none;   
 }
 #inspector {
     width: 240px;
@@ -32,6 +33,7 @@
         left: 0;
         top: 0;
     }
+
    
 }
 

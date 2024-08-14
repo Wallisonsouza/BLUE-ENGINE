@@ -5,7 +5,8 @@ export default class Scrypt {
     public awake(): void {}
     public start(): void {}
     public fixedUpdate(): void {}
-    public update(_deltaTime: number): void {}
+    public update(): void {}
+    public lateUpdate(): void {}
   
     public onCollisionEnter(_data: CollisionData) {}
     public onCollisionStay(_data: CollisionData) {}
@@ -13,4 +14,6 @@ export default class Scrypt {
     public onMouseEnter(entity: GameObject) {}
     public onMouseExit(entity: GameObject) {}
     public onMouseStay(entity: GameObject) {}
+    public onDrawGizmos(): void{}
+    public onGUI(): void{}
 }

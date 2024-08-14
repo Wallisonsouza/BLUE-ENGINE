@@ -1,14 +1,16 @@
 import KeyInput from "./KeyInput";
-import { EKey } from "./EKey";
+import { KeyCode } from "../Enum/KeyCode";
 import MouseInput from "./MouseInput";
 
 export default class Input {
     public static start(): void {
         KeyInput.initialize();
+        MouseInput.initialize();
     }
 
     public static update(): void {
-        KeyInput.update();
+        KeyInput.clear();
+        MouseInput.clear();
     }
 
     public static getMousePosition(): { x: number, y: number } {
@@ -20,15 +22,20 @@ export default class Input {
     }
 
 
-    public static getKeyDown(key: EKey): boolean {
+    public static onScroll(callback: (delta: { x: number, y: number }) => void): void {
+        MouseInput.onScroll(callback);
+    }
+
+
+    public static getKeyDown(key: KeyCode): boolean {
         return KeyInput.getKeyDown(key);
     }
 
-    public static getKey(key: EKey): boolean {
+    public static getKey(key: KeyCode): boolean {
         return KeyInput.getKey(key);
     }
 
-    public static getKeyUp(key: EKey): boolean {
+    public static getKeyUp(key: KeyCode): boolean {
         return KeyInput.getKeyUp(key);
     }
 

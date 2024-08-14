@@ -11,6 +11,7 @@ export default class HtmlReferences {
         y: document.getElementById("y") as HTMLInputElement,
         rotation: document.getElementById("rotation") as HTMLInputElement,
         index: document.getElementById("index") as HTMLInputElement,
+        borderRadiusLefTop: document.getElementById("index") as HTMLInputElement,
     };
 
     private static handlers = {

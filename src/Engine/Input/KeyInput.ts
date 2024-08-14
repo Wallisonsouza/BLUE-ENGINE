@@ -1,14 +1,14 @@
 export default class KeyInput {
-    private static readonly keyState = new Map<string, boolean>();
-    private static readonly keyDown = new Map<string, boolean>();
-    private static readonly keyUp = new Map<string, boolean>();
+    private static  keyState = new Map<string, boolean>();
+    private static  keyDown = new Map<string, boolean>();
+    private static  keyUp = new Map<string, boolean>();
 
     public static initialize(): void {
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
         document.addEventListener('keyup', this.handleKeyUp.bind(this));
     }
 
-    public static update(): void {
+    public static clear(): void {
         this.keyDown.clear();
         this.keyUp.clear();
     }
@@ -36,6 +36,7 @@ export default class KeyInput {
             this.keyState.set(e.key, true);
             this.keyDown.set(e.key, true);
         }
+      
     }
 
     private static handleKeyUp(e: KeyboardEvent): void {

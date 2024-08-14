@@ -1,22 +1,31 @@
 export default class Time {
     private accumulator: number = 0;
     private isRunning: boolean = false;
-    private readonly maxFrameSkip: number = 5; 
+    private isPaused: boolean = false;
+    private readonly maxFrameSkip: number = 5;
 
     public static deltaTime: number = 0;
     public static time: number = 0;
-    public static readonly fixedDeltaTime: number = 1 / 50; 
+    public static readonly fixedDeltaTime: number = 1 / 50;
+
+    private frameCount: number = 0;
+    private lastFpsTime: number = 0;
+    public static fps: number = 0;
 
     constructor(
-        private readonly updateCallback: (deltaTime: number) => void,
-        private readonly fixedUpdateCallback: (deltaTime: number) => void,
-        private readonly lateUpdateCallback: (deltaTime: number) => void
+        private readonly updateCallback: () => void,
+        private readonly fixedUpdateCallback: () => void,
+        private readonly lateUpdateCallback: () => void,
+        private readonly onDrawGizmosCallback: () => void,
+        private readonly onGUICallback: () => void
     ) {}
 
     public start(): void {
         if (this.isRunning) return;
         this.isRunning = true;
+        this.isPaused = false; 
         Time.time = performance.now();
+        this.lastFpsTime = Time.time;
         this.loop();
     }
 
@@ -24,26 +33,57 @@ export default class Time {
         this.isRunning = false;
     }
 
+    
+    public pause(): void {
+        this.isPaused = true;
+    }
+
+    public resume(): void {
+        if (!this.isRunning || !this.isPaused) return;
+        this.isPaused = false;
+        Time.time = performance.now();
+        this.loop();
+    }
+
+    public step(): void {
+        if (!this.isPaused) return;
+
+        this.processFrame();
+    }
+
     private loop(): void {
         if (!this.isRunning) return;
 
+        if (!this.isPaused) {
+            this.processFrame();
+        }
+
+        requestAnimationFrame(() => this.loop());
+    }
+
+    private processFrame(): void {
         const now = performance.now();
-        Time.deltaTime = (now - Time.time) / 1000; 
+        Time.deltaTime = (now - Time.time) / 1000;
         Time.time = now;
         this.accumulator += Time.deltaTime;
         let steps = 0;
-       
+
         while (this.accumulator >= Time.fixedDeltaTime && steps < this.maxFrameSkip) {
-            this.fixedUpdateCallback(Time.fixedDeltaTime);
+            this.fixedUpdateCallback();
             this.accumulator -= Time.fixedDeltaTime;
             steps++;
         }
 
-        this.updateCallback(Time.deltaTime);
-        this.lateUpdateCallback(Time.deltaTime);
-       
-        requestAnimationFrame(() => this.loop());
+        this.updateCallback();
+        this.lateUpdateCallback();
+        this.onDrawGizmosCallback();
+        this.onGUICallback();
 
-      
+        this.frameCount++;
+        if (now - this.lastFpsTime >= 1000) {
+            Time.fps = this.frameCount;
+            this.frameCount = 0;
+            this.lastFpsTime = now;
+        }
     }
 }

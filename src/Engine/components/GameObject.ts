@@ -1,6 +1,5 @@
 import Component from "../engine/base_component";
-import BaseObject from "../engine/Scrypt";
-import { IGameObject } from "./IGameObject";
+import BaseObject from "../engine/Entity";
 import List from "./List";
 import Rect from "./Rect";
 
@@ -13,7 +12,7 @@ import Rect from "./Rect";
  * @example
  * const gameObject = new GameObject("Player");
  */
-export default class GameObject extends BaseObject implements IGameObject {
+export default class GameObject extends BaseObject {
     
     public layer: number;
     public active: boolean;
@@ -122,11 +121,10 @@ export default class GameObject extends BaseObject implements IGameObject {
 
     public toString(): string {
         return `
-        GameObject: ${this.name}
-        Layer: ${this.layer}
-        Active: ${this.active}
-        Tag: ${this.tag}
-        Components: ${this.components.toArray().map(component => component.toString()).join(", ")}
+            GameObject: ${this.name}
+            Layer: ${this.layer}
+            Active: ${this.active}
+            Tag: ${this.tag}
         `;
     }
 }

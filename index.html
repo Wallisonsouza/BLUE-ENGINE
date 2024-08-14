@@ -28,6 +28,16 @@
             height: 100%;
             flex: 1;
         }
+
+        #canvas2d {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            left: 0;
+            right: 0;
+        }
+
         .content {
             height: 100%;
             overflow-y: scroll;
@@ -39,9 +49,9 @@
         }
 
 
-        #square-renderer, #image-renderer {
+        /* #square-renderer, #image-renderer {
             display: none;
-        }
+        } */
 
         .upbar {
             display: flex;
@@ -52,14 +62,18 @@
             display: flex;
             gap: 8px;
         }
-        
       
     </style>
 </head>
 <body>
-    <div id="hierarchy"></div>
+    <div id="hierarchy">
+        
+    </div>
+    <div id="teste"></div>
     <canvas id="canvas"></canvas>
-    <div id="inspector">
+        
+   
+    <!-- <div id="inspector">
         <div id="inspector-title">Element Extensions</div>
         <div class="content">
             <div id="inspector-handle"> </div>
@@ -142,7 +156,7 @@
         </div>
         <button type="button">Add Extension</button>
     </div>
-  
+   -->
     <script src="./src/main.ts" type="module"></script>
 </body>
 </html>

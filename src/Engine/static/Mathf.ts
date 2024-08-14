@@ -1,3 +1,5 @@
+import Vec3 from "../graphycs/vec3";
+
 export default class Mathf {
 
     public static readonly INFINITY = Infinity;
@@ -128,6 +130,7 @@ export default class Mathf {
         const range = max - min;
         return (normalizedAngle - min) % range + min;
     }
+     
 
     /**
      *  Converte radianos para graus
