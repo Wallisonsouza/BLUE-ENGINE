@@ -232,6 +232,27 @@ export default class Mathf {
         return this.distance(px, py, closestX, closestY);
     }
 
-    
+    public static getValidRadius(radius: number, height: number, width: number) {
+       return Math.max(0, Math.min(radius, Math.min(height / 2, width / 2)));
+    }
 
+    public static translatePoint(x: number, y: number, angle: number, distance: number): {x: number, y: number} {
+        const rad = Mathf.degToRad(angle);
+        return {
+            x: x + distance * Math.cos(rad),
+            y: y + distance * Math.sin(rad)
+        }
+    }
+
+    public static mouseRelative(mouse: {x: number, y: number}, position: {x: number, y: number}, angle: number): {x: number, y: number} {
+        const dx = mouse.x - position.x;
+        const dy = mouse.y - position.y;
+        const rad = Mathf.degToRad(angle);
+        const rotatedPos = this.rotatePoint(dx, dy, -angle);
+
+        return {
+            x: rotatedPos.x,
+            y: rotatedPos.y
+        }
+    }
 }

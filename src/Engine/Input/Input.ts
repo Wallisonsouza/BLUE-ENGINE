@@ -1,17 +1,24 @@
-import MouseInput from "./MouseInput";
 import KeyInput from "./KeyInput";
 import { EKey } from "./EKey";
+import MouseInput from "./MouseInput";
 
 export default class Input {
-    public static initialize(): void {
-        MouseInput.initialize();
+    public static start(): void {
         KeyInput.initialize();
     }
 
     public static update(): void {
-        MouseInput.update();
         KeyInput.update();
     }
+
+    public static getMousePosition(): { x: number, y: number } {
+        return MouseInput.getPosition();
+    }
+
+    public static getMouseMovement(): { x: number, y: number } {
+        return MouseInput.getMovement();
+    }
+
 
     public static getKeyDown(key: EKey): boolean {
         return KeyInput.getKeyDown(key);
@@ -25,6 +32,7 @@ export default class Input {
         return KeyInput.getKeyUp(key);
     }
 
+
     public static getMouseButtonDown(button: number): boolean {
         return MouseInput.getMouseButtonDown(button);
     }
@@ -37,35 +45,15 @@ export default class Input {
         return MouseInput.getMouseButtonUp(button);
     }
 
-    public static get mouseDelta() {
-        return MouseInput.getMouseMovement();
-    }
+    // public static getClickHold(
+    //     element: HTMLElement,
+    //     clickHoldThreshold: number = 500,
+    //     onClick?: (event: MouseEvent) => void,
+    //     onClickAndHold?: (event: MouseEvent) => void
+    // ): void
 
-    public static get mousePosition(){
-        return MouseInput.getMousePosition();
-    }
-
-    public static onMouseMove(callback: (event: MouseEvent) => void) {
-        MouseInput.onMouseMove(callback);
-    }
-
-    public static onMouseDown(callback: (event: MouseEvent) => void) {
-        MouseInput.onMouseDown(callback);
-    }
-
-    public static onMouseUp(callback: (event: MouseEvent) => void) {
-        MouseInput.onMouseUp(callback);
-    }
-
-    public static getClickHold(
-        element: HTMLElement,
-        clickHoldThreshold: number = 500,
-        onClick?: (event: MouseEvent) => void,
-        onClickAndHold?: (event: MouseEvent) => void
-    ): void
-
-    {
-        MouseInput.getClickHold(element, clickHoldThreshold, onClick, onClickAndHold);
-    }
+    // {
+    //     MouseInput.getClickHold(element, clickHoldThreshold, onClick, onClickAndHold);
+    // }
 }
 

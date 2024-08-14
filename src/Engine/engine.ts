@@ -1,75 +1,50 @@
+import { importer } from "../Figma/importer";
 import Input from "./Input/Input";
+import KeyInput from "./Input/KeyInput";
+import MouseInput from "./Input/MouseInput";
+import PhysicsManager from "./Managers/PhysicsManager";
 import RendererManager from "./Managers/RendererManager";
 import ScryptManager from "./Managers/ScryptManager";
 import Time from "./static/Time";
 
 export default class Engine {
+    private time: Time;
+    private ctx: CanvasRenderingContext2D;
 
-    private targetFps: number = 60;
-    private endEngine: boolean = false;
-    private paused: boolean = false;
-    private lastTime: number = 0;
-
-    private fixedTime(): void {
-        if (!this.endEngine && !this.paused) {
-            this.fixedUpdate();
-            setTimeout(this.fixedTime.bind(this), 1000 / this.targetFps);
-        }
-    }
-    
-    private fpsBasedTime(): void {
-        if (!this.endEngine && !this.paused) {
-            const now = performance.now();
-            const deltaTime = (now - this.lastTime) / 1000;
-            this.lastTime = now;
-            Time.setDeltaTime(deltaTime);
-            Time.setTime(now);
-            this.update(deltaTime);
-            requestAnimationFrame(this.fpsBasedTime.bind(this));
-        }
+    constructor(ctx: CanvasRenderingContext2D) {
+        this.ctx = ctx;
+        this.time = new Time(
+            this.update.bind(this), 
+            this.fixedUpdate.bind(this), 
+            this.lateUpdate.bind(this)
+        );
     }
 
     public start(): void {
-        ScryptManager.scrypts.forEach(scrypt => {
-            scrypt.start();
-        })
-        this.lastTime = performance.now();
-        this.fpsBasedTime();
-        this.fixedTime();
-        Input.initialize();
-       
-    }
-    
-    public pause(): void { 
-        this.paused = true; 
-    }
-    public resume(): void { 
-        this.paused = false; 
-        this.lastTime = performance.now(); 
-        this.fpsBasedTime();
+        this.time.start();
+        importer();
+        MouseInput.initialize(this.ctx.canvas);
+        KeyInput.initialize();
+        ScryptManager.start();
     }
 
-    public end(): void { 
-        this.endEngine = true; 
+    public stop(): void {
+        this.time.stop();
     }
 
-    // Metodo chamado a cada frame
+    private fixedUpdate(deltaTime: number): void {
+        ScryptManager.fixedUpdate();
+        PhysicsManager.fixedUpdate();
+    }
+
     private update(deltaTime: number): void {
-        RendererManager.render();
-        ScryptManager.scrypts.forEach((logic) => {
-            logic.update(deltaTime);
-        });
-
-        Input.update();
+        ScryptManager.update(deltaTime);
+        RendererManager.update(this.ctx, deltaTime);
+        MouseInput.update();
+        KeyInput.update();
     }
 
-    // Metodo chamado a cada fixed frame
-    private fixedUpdate(): void {
-        
-        ScryptManager.scrypts.forEach((logic) => {
-            logic.fixedUpdate();
-        });
-
-       
+    private lateUpdate(deltaTime: number): void {
+      
     }
 }

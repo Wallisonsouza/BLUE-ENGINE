@@ -7,7 +7,6 @@ import SquareRenderer from "./SquareRenderer";
 export default class CreateObject {
 
     public static camera(): GameObject {
-
         const scene = SceneManager.getCurrentScene();
         const object = new GameObject();
         object.name = "Camera";
@@ -18,14 +17,21 @@ export default class CreateObject {
     }
 
     public static square(color: string = "white"): GameObject {
-        
         const scene = SceneManager.getCurrentScene();
         const object = new GameObject();
-        object.name = "Square";
+        object.name = "New Square";
+        const squareRenderer =  object.addComponent(SquareRenderer);
+       squareRenderer.fillColor = color;
+        scene?.hierarchy.addGameObject(object);
+        return object;
+    }
 
-        
-        const squareRenderer = object.addComponent(SquareRenderer);
-        squareRenderer.fillColor = color;
+    public static image(src: string = "src/Assets/Images/no-image.jpeg"){
+        const scene = SceneManager.getCurrentScene();
+        const object = new GameObject();
+        object.name = "New Image";
+        const imageRenderer = object.addComponent(ImageRenderer);
+        imageRenderer.setImageSource(src);
         scene?.hierarchy.addGameObject(object);
         return object;
     }

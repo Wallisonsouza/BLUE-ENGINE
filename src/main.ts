@@ -1,23 +1,22 @@
 import RendererManager from "./Engine/Managers/RendererManager";
-import { importer } from "./Figma/importer";
 import SimpleEngine from "./SimpleEngine";
 import "./Style/style.css";
 
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function resizeCanvas(){
+    canvas.width = canvas.getBoundingClientRect().width;
+    canvas.height = canvas.getBoundingClientRect().height;
+}
+resizeCanvas();
 
 window.addEventListener("resize", (e) => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+   resizeCanvas();
 });
 
 
-let engine = new SimpleEngine();
-RendererManager.setContext(ctx);
-importer();
+let engine = new SimpleEngine(ctx);
 engine.start();
 
 
@@ -41,6 +40,7 @@ document.addEventListener("mousemove", (e) => {
     if(isResizing) {
         originalWidth -= e.movementX;
         inspector.style.width = `${originalWidth}px`;
+        resizeCanvas();
     }
 });
 

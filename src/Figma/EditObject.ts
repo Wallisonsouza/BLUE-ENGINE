@@ -5,112 +5,191 @@ import Input from "../Engine/Input/Input";
 import CreateObject from "../Engine/renderer/CreateObject";
 import Mathf from "../Engine/static/Mathf";
 import { EKey } from "../Engine/Input/EKey";
+import HtmlReferences from "../Engine/static/HtmlReferences";
 export default class EditEntity extends Scrypt {
 
-    private targetObject!: GameObject;
-    private inspectorElement: HTMLDivElement;
-    private textElement: HTMLDivElement;
+    private targetObject: GameObject;
     private isDragging: boolean = false;
-
-    private right: boolean = false;
-    private left: boolean = false;
-    private top: boolean = false;
-    private bottom: boolean = false;
+    private border: Border = Border.NONE;
 
 
-    private updateRect: Rect;
-
-    constructor() {
-        super();
+    private mouseButtonDown0: boolean = false;
+    private image: GameObject;
+    public start(): void {
+       
+        CreateObject.square("green");
+        // CreateObject.square("red");
+        this.image = CreateObject.image("src/Assets/Images/arrows.svg");
+        this.image.active = false;
+        this.image.rect.physics = false;
     }
 
-    public override start(): void {
-        this.initializeTargetObject();
-    }
-
-    public override update(deltaTime: number): void {
-        const mousePosition = Input.mousePosition;
-        const rotatedPos = this.targetObject.rect.rotatedPosition;
-        const border = this.checkBorder(mousePosition.x, mousePosition.y, rotatedPos.x, rotatedPos.y, this.targetObject.rect.width, this.targetObject.rect.height, this.targetObject.rect.rotation, 15);
+    public update(deltaTime: number): void {   
         
-        this.handleMouseInput(border);
-        this.handleKeyInput();
+        this.processInputs();
+        if(this.targetObject) {
+            const mousePosition = Input.getMousePosition();
+            this.border = RectUtilitys.checkBorder(mousePosition.x, mousePosition.y,this.targetObject.rect, 8);
+            
+            switch(this.border) {
+                case Border.LeftTop:
+                    this.image.rect.rotation = this.targetObject.rect.rotation + 45;
+                    this.image.rect.x = mousePosition.x - this.image.rect.width/2;
+                    this.image.rect.y = mousePosition.y- this.image.rect.height/2;
+                    this.image.active = true;
+                    break;
+                case Border.RightTop:
+                    this.image.rect.rotation = this.targetObject.rect.rotation - 45;
+                    this.image.rect.x = mousePosition.x - this.image.rect.width/2;
+                    this.image.rect.y = mousePosition.y- this.image.rect.height/2;
+                    this.image.active = true;
+                    break;
+                case Border.LeftBottom:
+                    this.image.rect.rotation = this.targetObject.rect.rotation - 45;
+                    this.image.rect.x = mousePosition.x - this.image.rect.width/2;
+                    this.image.rect.y = mousePosition.y- this.image.rect.height/2;
+                    this.image.active = true;
+                    break;
+                case Border.RIGHT_BOTTOM:
+                    this.image.rect.rotation = this.targetObject.rect.rotation + 45;
+                    this.image.rect.x = mousePosition.x - this.image.rect.width/2;
+                    this.image.rect.y = mousePosition.y- this.image.rect.height/2;
+                    this.image.active = true;
+                break
+                case Border.RIGHT:
+                    this.image.rect.rotation = this.targetObject.rect.rotation + 0;
+                    this.image.rect.x = mousePosition.x - this.image.rect.width/2;
+                    this.image.rect.y = mousePosition.y- this.image.rect.height/2;
+                    this.image.active = true;
+                    break;
+                case Border.LEFT:
+                    this.image.rect.rotation = this.targetObject.rect.rotation + 0;
+                    this.image.rect.x = mousePosition.x - this.image.rect.width/2;
+                    this.image.rect.y = mousePosition.y- this.image.rect.height/2;
+                    this.image.active = true;
+                    break;
+                case Border.TOP:
+                    this.image.rect.rotation = this.targetObject.rect.rotation + 90;
+                    this.image.rect.x = mousePosition.x - this.image.rect.width/2;
+                    this.image.rect.y = mousePosition.y- this.image.rect.height/2;
+                    this.image.active = true;
+                    break;
+                case Border.BOTTOM:
+                    this.image.rect.rotation = this.targetObject.rect.rotation + 90;
+                    this.image.rect.x = mousePosition.x - this.image.rect.width/2;
+                    this.image.rect.y = mousePosition.y- this.image.rect.height/2;
+                    this.image.active = true;
+                    break;
+                default:
+                    this.image.active = false;
+                    break;
+            }
 
-        if (this.isDragging && !this.right && !this.left && !this.top && !this.bottom) {
-            const delta = Input.mouseDelta;
-            this.targetObject.rect.x += delta.x;
-            this.targetObject.rect.y += delta.y;
-        }
-
-        if(this.updateRect) {
-        
+            if(Input.getMouseButton(0)) {
+    
+                const delta = Input.getMouseMovement();
+                const rotatedMouse = Mathf.rotatePoint(delta.x, delta.y, -this.targetObject.rect.rotation);
+    
+                switch(this.border) {
+                    case Border.LeftTop:
+                        RectUtilitys.resizeLeft(this.targetObject.rect, rotatedMouse.x);
+                        RectUtilitys.resizeTop(this.targetObject.rect, rotatedMouse.y);
+                        break;
+                    case Border.RightTop:
+                        RectUtilitys.resizeRight(this.targetObject.rect, rotatedMouse.x);
+                        RectUtilitys.resizeTop(this.targetObject.rect, rotatedMouse.y);
+                        break;
+                    case Border.LeftBottom:
+                        RectUtilitys.resizeLeft(this.targetObject.rect, rotatedMouse.x);
+                        RectUtilitys.resizeBottom(this.targetObject.rect, rotatedMouse.y);
+                        break;
+                    case Border.RIGHT_BOTTOM:
+                        RectUtilitys.resizeRight(this.targetObject.rect, rotatedMouse.x);
+                        RectUtilitys.resizeBottom(this.targetObject.rect, rotatedMouse.y);
+                        break;
+                    case Border.LEFT:
+                        RectUtilitys.resizeLeft(this.targetObject.rect, rotatedMouse.x);
+                        break;
+                    case Border.RIGHT:
+                        RectUtilitys.resizeRight(this.targetObject.rect, rotatedMouse.x);
+                        break;
+                    case Border.TOP:
+                        RectUtilitys.resizeTop(this.targetObject.rect, rotatedMouse.y);
+                        break;
+                    case Border.BOTTOM:
+                        RectUtilitys.resizeBottom(this.targetObject.rect, rotatedMouse.y);
+                        break;
+                }
+            }
+    
+            if (this.isDragging) {
+                const delta = Input.getMouseMovement();
+                this.targetObject.rect.x += delta.x;
+                this.targetObject.rect.y += delta.y;
+            }
+            HtmlReferences.getRectValues(this.targetObject.rect);
+    
+            if (Input.getMouseButtonUp(0)) {
+                this.isDragging = false;
+                this.border = Border.NONE;
+                this.mouseButtonDown0 = false;
+            }
         }
     }
 
-    private initializeTargetObject(): void {
-        this.targetObject = CreateObject.square();
-        this.targetObject.rect.index = 999;
-    }
-
-    private handleMouseInput(border: any): void {
-        if (border.onRightEdge && Input.getMouseButtonDown(0)) {
-            this.right = true;
-        }
-        if (border.onLeftEdge && Input.getMouseButtonDown(0)) {
-            this.left = true;
-        }
-        if (border.onTopEdge && Input.getMouseButtonDown(0)) {
-            this.top = true;
-        }
-        if (border.onBottomEdge && Input.getMouseButtonDown(0)) {
-            this.bottom = true;
+    private processInputs(){
+        if(Input.getMouseButtonDown(0)){
+            this.mouseButtonDown0 = true;
         }
 
-        const delta = Input.mouseDelta;
-        const rotatedMouse = Mathf.rotatePoint(delta.x, delta.y, -this.targetObject.rect.rotation);
-
-        if (this.right && Input.getMouseButton(0)) {
-            this.resizeRight(this.targetObject.rect, rotatedMouse.x);
-        }
-        if (this.left && Input.getMouseButton(0)) {
-            this.resizeLeft(this.targetObject.rect, rotatedMouse.x);
-        }
-        if (this.top && Input.getMouseButton(0)) {
-            this.resizeTop(this.targetObject.rect, rotatedMouse.y);
-        }
-        if (this.bottom && Input.getMouseButton(0)) {
-            this.resizeBottom(this.targetObject.rect, rotatedMouse.y);
+        if(Input.getKeyDown(EKey.E)){
+            this.targetObject.rect.rotation +=  15;
         }
 
-        if (Input.getMouseButtonUp(0)) {
-            this.isDragging = false;
-            this.right = false;
-            this.left = false;
-            this.top = false;
-            this.bottom = false;
+        if(Input.getKeyDown(EKey.Q)){
+            this.targetObject.rect.rotation -=  15;
         }
     }
 
-    private handleKeyInput(): void {
-        if (Input.getKey(EKey.Q)) { 
-            this.targetObject.rect.rotation -= 1;
-        }
-        if (Input.getKey(EKey.E)) { 
-            this.targetObject.rect.rotation += 1;
+    public onMouseStay(entity: GameObject): void {
+        if(this.mouseButtonDown0){
+            this.isDragging = true;
+            this.targetObject = entity;
+            HtmlReferences.setRectValues(entity.rect);
+            HtmlReferences.interface.inspectorTitle.innerText = entity.name;
+            this.mouseButtonDown0 = false;
         }
     }
+}
 
-    private resizeLeft(rect: Rect, value: number): void {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class RectUtilitys {
+    public static resizeLeft(rect: Rect, value: number): void {
         const positionBefore = rect.rotatedPosition;
         rect.width -= value;
         const positionAfter = rect.rotatedPosition;
-
         rect.x += positionAfter.x - positionBefore.x;
         rect.y += positionAfter.y - positionBefore.y;
         rect.x += value;
     }
 
-    private resizeRight(rect: Rect, value: number): void {
+    public static resizeRight(rect: Rect, value: number): void {
         const positionBefore = rect.rotatedPosition;
         rect.width += value;
         const positionAfter = rect.rotatedPosition;
@@ -118,16 +197,16 @@ export default class EditEntity extends Scrypt {
         rect.y -= positionAfter.y - positionBefore.y;
     }
 
-    private resizeTop(rect: Rect, value: number): void {
+    public static resizeTop(rect: Rect, value: number): void {
         const positionBefore = rect.rotatedPosition;
         rect.height -= value;
         const positionAfter = rect.rotatedPosition;
-        rect.y += value;
         rect.x += positionAfter.x - positionBefore.x;
         rect.y += positionAfter.y - positionBefore.y;
+        rect.y += value;
     }
 
-    private resizeBottom(rect: Rect, value: number): void {
+    public static resizeBottom(rect: Rect, value: number): void {
         const positionBefore = rect.rotatedPosition;
         rect.height += value;
         const positionAfter = rect.rotatedPosition;
@@ -135,41 +214,66 @@ export default class EditEntity extends Scrypt {
         rect.x -= positionAfter.x - positionBefore.x;
     }
 
-    private checkBorder(mouseX: number, mouseY: number, x: number, y: number, width: number, height: number, rotation: number, offset: number) {
-        const translatedPositionX = mouseX - x;
-        const translatedPositionY = mouseY - y;
-        const rotatedPosition = Mathf.rotatePoint(translatedPositionX, translatedPositionY, -rotation); 
-        const finalPositionX = x + rotatedPosition.x;
-        const finalPositionY = y + rotatedPosition.y;
+    public static checkBorder(
+        mouseX: number, 
+        mouseY: number, 
+        rect: Rect,
+        offset: number, 
+    
+    ): Border {
 
-        const left = x - offset;
-        const right = x + width + offset;
-        const top = y - offset;
-        const bottom = y + height + offset;
+        const rotatedRect = rect.getRotatedPosition();
+        const edge = rect.getEdges();
+
+        const translatedPositionX = mouseX - rotatedRect.x;
+        const translatedPositionY = mouseY - rotatedRect.y;
+
+        const rotatedPosition = Mathf.rotatePoint(translatedPositionX, translatedPositionY, -rect.rotation); 
+        const finalPositionX = rotatedRect.x + rotatedPosition.x;
+        const finalPositionY = rotatedRect.y + rotatedPosition.y;
+      
+        const onTopEdge = finalPositionY >= edge.top - offset
+        && finalPositionY <= rotatedRect.y + offset
+        && finalPositionX >= (rect.width < 0 ? edge.right : rotatedRect.x)
+        && finalPositionX <= (rect.width < 0 ? rotatedRect.x : edge.right);
+
+        const onBottomEdge = finalPositionY <= edge.bottom + offset
+        && finalPositionY >= rotatedRect.y + rect.height - offset
+        && finalPositionX >= (rect.width < 0 ? edge.right : rotatedRect.x)
+        && finalPositionX <= (rect.width < 0 ? rotatedRect.x : edge.right);
+
+        const onLeftEdge = finalPositionX >= edge.left - offset && 
+        finalPositionX <= rotatedRect.x + offset 
+        && finalPositionY >= (rect.height < 0 ? edge.bottom : rotatedRect.y)
+        && finalPositionY <= (rect.height < 0 ? rotatedRect.y : edge.bottom);
+
+        const onRightEdge = finalPositionX <= edge.right + offset
+        && finalPositionX >= rotatedRect.x + rect.width - offset
+        && finalPositionY >= (rect.height < 0 ? edge.bottom : rotatedRect.y)
+        && finalPositionY <= (rect.height < 0 ? rotatedRect.y : edge.bottom);
         
-        const onLeftEdge = finalPositionX >= left && finalPositionX <= x + offset && finalPositionY >= y && finalPositionY <= bottom;
-        const onRightEdge = finalPositionX <= right && finalPositionX >= x + width - offset && finalPositionY >= y && finalPositionY <= bottom;
-        const onTopEdge = finalPositionY >= top && finalPositionY <= y + offset && finalPositionX >= x && finalPositionX <= right;
-        const onBottomEdge = finalPositionY <= bottom && finalPositionY >= y + height - offset && finalPositionX >= x && finalPositionX <= right;
+        if(onLeftEdge && onTopEdge) return Border.LeftTop;
+        if(onRightEdge && onTopEdge) return Border.RightTop;
+        if(onLeftEdge && onBottomEdge) return Border.LeftBottom;
+        if(onRightEdge && onBottomEdge) return Border.RIGHT_BOTTOM;
 
-        this.targetObject.rect.fill = (onLeftEdge || onRightEdge || onTopEdge || onBottomEdge) ? "red" : "white";
-
-        return {
-            onLeftEdge,
-            onRightEdge,
-            onTopEdge,
-            onBottomEdge
-        };
+        if (onLeftEdge) return Border.LEFT;
+        if (onRightEdge) return Border.RIGHT;
+        if (onTopEdge) return Border.TOP;
+        if (onBottomEdge) return Border.BOTTOM;
+    
+        return Border.NONE;
     }
+}
 
-    public onMouseStay(entity: GameObject): void {
-        if(Input.getMouseButton(0)) {
-            this.isDragging = true;
-          
-        }
-
-        if(Input.getMouseButtonDown(0)) {
-            this.updateRect = entity.rect;
-        }
-    }
+export enum Border {
+    LEFT,
+    RIGHT,
+    TOP,
+    BOTTOM,
+    LeftTop,
+    RightTop,
+    LeftBottom,
+    RIGHT_BOTTOM,
+    NONE
 }

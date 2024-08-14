@@ -1,7 +1,5 @@
-import Vector2 from "../../vector2";
 import Component from "../engine/base_component";
 import Mathf from "../static/Mathf";
-import Camera from "./Camera";
 type BorderRadius = { lt: number, lb: number, rt: number, rb: number };
 export default class Rect extends Component {
 
@@ -13,8 +11,9 @@ export default class Rect extends Component {
     private _originX: number = 0.5;
     private _originY: number = 0.5;
     private _index: number = 0;
-    public fill: string = "white";
-    public borderRadius: BorderRadius = { lt: 0, lb: 0, rt: 0, rb: 0 };
+    public fill: string = "transparent";
+    public borderRadius: BorderRadius = { lt: 20, lb: 20, rt: 20, rb: 20 };
+    public physics: boolean = true;
 
     public get x(): number {
         return this._x;
@@ -23,11 +22,6 @@ export default class Rect extends Component {
         return this._y;
     }
     public get width(): number {
-        const positionBefore = this.rotatedPosition;
-        // this.width += value;
-        // const positionAfter = this.rotatedPosition;
-        // this.x -= positionAfter.x - positionBefore.x;
-        // this.y -= positionAfter.y - positionBefore.y;
         return this._width;
     }
     public get height(): number {
@@ -83,55 +77,18 @@ export default class Rect extends Component {
             this._rotation
         );
     }
-    
-    /**
-     * Verifica se um ponto está dentro do retângulo
-     * @param x -A posicao do ponto x
-     * @param y -A posicao do ponto y
-     * @returns true se o ponto estiver dentro do retângulo
-     */
-    public contains(x: number, y: number, camera: Camera): boolean {
 
-        const positionOffset = this.rotatedPosition;
-        const translatedX = x - positionOffset.x;
-        const translatedY = y - positionOffset.y;
-        const rotated = Mathf.rotatePoint(translatedX, translatedY, -this.rotation);
-        const finalX = rotated.x + positionOffset.x;
-        const finalY = rotated.y + positionOffset.y;
-       
-        return (
-            finalX >= positionOffset.x &&
-            finalX <= positionOffset.x + this.width &&
-            finalY >= positionOffset.y &&
-            finalY <= positionOffset.y + this.height
-        );
+    public getEdges(): { top: number, right: number, bottom: number, left: number } {
+        const { x, y } = this.rotatedPosition;
+        return {
+            top: y,
+            right: x + this._width,
+            bottom: y + this._height,
+            left: x
+        };
     }
-
-    public toString() {
-        return ` 
-            position: {x: ${this.x}, y: ${this.y}}
-            rotation: ${this.rotation}deg
-            size: {width: ${this.width},  height: ${this.height}}
-            index: ${this.index}
-        `;
+    public getRotatedPosition(){
+        return this.rotatedPosition;
     }
-    public html(): string {
-
-        const style = `
-            position: absolute;
-            left: ${this.x}px;
-            top: ${this.y}px;
-            width: ${this.width}px;
-            height: ${this.height}px;
-            transform: rotate(${this.rotation}deg);
-            transform-origin: ${this.originX * 100}% ${this.originY * 100}%;
-            z-index: ${this.index};
-            border-radius: 20px;
-            background-color: #${this.fill};
-        `;
-    
-        return `<div style="${style}"></div>`;
-    }
-    
 }
 

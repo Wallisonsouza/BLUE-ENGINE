@@ -31,7 +31,7 @@ export class AxisInput {
 
     // Função principal para obter o eixo
     public static getAxis(axis: string) {
-        const deltaTime = Time.getDeltaTime();
+        const deltaTime = Time.deltaTime;
 
         if (axis === "Horizontal") {
             this.interpolateKey("d", 1, deltaTime);

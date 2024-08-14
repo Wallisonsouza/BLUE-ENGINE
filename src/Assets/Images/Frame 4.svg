@@ -1,0 +1,24 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_667_2)">
+<circle cx="2" cy="14" r="1" transform="rotate(90 2 14)" fill="white"/>
+<circle cx="5" cy="14" r="1" transform="rotate(90 5 14)" fill="white"/>
+<circle cx="8" cy="14" r="1" transform="rotate(90 8 14)" fill="white"/>
+<circle cx="11" cy="14" r="1" transform="rotate(90 11 14)" fill="white"/>
+<circle cx="11" cy="14" r="1" transform="rotate(90 11 14)" fill="white"/>
+<circle cx="14" cy="14" r="1" transform="rotate(90 14 14)" fill="white"/>
+<circle cx="1.87048" cy="10.9993" r="1" fill="white"/>
+<circle cx="1.90289" cy="7.99945" r="1" fill="white"/>
+<circle cx="1.93524" cy="4.99963" r="1" fill="white"/>
+<circle cx="1.96759" cy="1.99982" r="1" fill="white"/>
+<circle cx="5.00052" cy="2.09711" r="1" transform="rotate(90 5.00052 2.09711)" fill="white"/>
+<circle cx="8.00034" cy="2.06476" r="1" transform="rotate(90 8.00034 2.06476)" fill="white"/>
+<circle cx="14" cy="11" r="1" transform="rotate(90 14 11)" fill="white"/>
+<circle cx="14" cy="8" r="1" transform="rotate(90 14 8)" fill="white"/>
+<path d="M10 2H14V6" stroke="rgb(255,100,0)" stroke-width="2"/>
+</g>
+<defs>
+<clipPath id="clip0_667_2">
+<rect width="16" height="16" fill="white" transform="matrix(0 1 -1 0 16 0)"/>
+</clipPath>
+</defs>
+</svg>
