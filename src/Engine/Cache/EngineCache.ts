@@ -1,9 +1,11 @@
+import Camera from "../Core/Inplementations/Camera";
 import Mesh from "../graphycs/Mesh";
 import LRUCache from "./LRUCache";
 
 export default class EngineCache {
-    public static gl: WebGLRenderingContext;
+    public static gl: WebGL2RenderingContext;
     public static meshTeste: Mesh;
+    public static camera: Camera = new Camera();
 
     // private static entities: GameObject[] = [];
     // public static setEntities(entities: GameObject[]): void {

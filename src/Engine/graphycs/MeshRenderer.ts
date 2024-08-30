@@ -1,226 +1,183 @@
+import Mesh from "./Mesh";
 import EngineCache from "../Cache/EngineCache";
 import Camera from "../Core/Inplementations/Camera";
-import Material from "../Core/Inplementations/Material";
-import Shader from "../Core/Inplementations/Shader";
 import Transform from "../Core/Inplementations/Transform";
-import { AppError } from "../Core/Error/AppError";
-import { ErrorContext } from "../Core/Error/ErrorContext";
-import { ErrorMessages } from "../Core/Error/ErrorMessage";
-import Mat4 from "../Core/Math/Mat4";
-import Mesh from "./Mesh";
-import Input from "../Input/Input";
-import { KeyCode } from "../Enum/KeyCode";
+import Material from "../Core/Inplementations/Material";
+import Gizmos from "./Gizmos";
+import Vec3 from "../Core/Math/vec3";
+import Color from "../static/color";
+import { Renderer } from "./SpriteRenderer";
 
-export default class MeshRenderer {
-    public transform: Transform = new Transform();
+export default class MeshRenderer extends Renderer {
+    public transform: Transform= new Transform();
     public mesh: Mesh | null = null;
-    public material: Material | null = new Material();
-    public camera: Camera | null = new Camera();
+    public material: Material | null;
     public renderMode: RenderMode = RenderMode.SOLID;
-
+    private gl: WebGL2RenderingContext = Renderer.wegl2;
+    
     public setMesh(mesh: Mesh): void {
         this.mesh = mesh;
+    }   
+
+    render(): void {
+        this.renderScene();
+        this.drawGizmos();
     }
     
-    public render(): void {
-        
+    private renderScene() {
+        const camera = Camera.currentCamera;
 
-        
-        const context = new ErrorContext("EngineCache", "MeshRenderer", "render");
+        if (!camera || !this.mesh || !this.material || !this.mesh.triangles) return;
     
-        // Verifica a disponibilidade do contexto WebGL
-        if (!EngineCache.gl) {
-            throw new AppError({
-                ...context,
-                message: ErrorMessages.WEBGL_NOT_AVAILABLE,
-            });
-        }
-        
-        if(!this.camera) return;
-        // Verifica se a malha está definida
-        if (!this.mesh) {
-            throw new AppError({
-                ...context,
-                message: ErrorMessages.MESH_NOT_DEFINED,
-            });
-        }
-    
-        // Verifica se o material está definido
-        if (!this.material) {
-            throw new AppError({
-                ...context,
-                message: ErrorMessages.MATERIAL_NOT_DEFINED,
-            });
-        }
-    
-        // Verifica se o programa de shader está definido
-        const program = this.material.shader.program;
-        if (!program) {
-            throw new AppError({
-                ...context,
-                message: "Shader program não encontrado. Verifique se o shader foi corretamente compilado e vinculado.",
-            });
-        }
+        // Configure o shader da cena
+        this.material.shader.use();
       
-        const gl = EngineCache.gl;
-        gl.useProgram(program);
-
-        // Vinculação dos buffers
-        if (this.mesh.vertexBuffer && this.mesh.indexBuffer) {
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.vertexBuffer);
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
-        } else {
-            throw new AppError({
-                ...context,
-                message: "Buffers da malha não foram inicializados. Certifique-se de que a malha foi corretamente compilada.",
-            });
-        }
-
-        const positionLocation = this.material.shader.getAttributeLocation('aPosition');
-        if (positionLocation !== null) {
-            gl.enableVertexAttribArray(positionLocation);
-            gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
-        } else {
-            throw new AppError({
-                ...context,
-                message: "Atributo de posição não encontrado no shader. Verifique se o atributo 'aPosition' está corretamente definido no shader.",
-            });
-        }
-
-        const normalLocation = this.material.shader.getAttributeLocation('a_Normal');
-        if (normalLocation !== null) {
-            gl.enableVertexAttribArray(normalLocation);
-            gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
-        } else {
-            throw new AppError({
-                ...context,
-                message: "Atributo de posição não encontrado no shader. Verifique se o atributo 'a_Normal' está corretamente definido no shader.",
-            });
-        }
-
-        const UVLocation = this.material.shader.getAttributeLocation('aTexCoord');
-        if (UVLocation !== null && this.mesh.UVBuffer) {
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.UVBuffer);
-            gl.enableVertexAttribArray(UVLocation);
-            gl.vertexAttribPointer(UVLocation, 2, gl.FLOAT, false, 0, 0);
-        }
-
-        
-        if (this.material.texture) {
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.material.texture);
-            const textureLocation = this.material.shader.getUniformLocation("uTexture");
-            gl.uniform1i(textureLocation, 0);  // O 0 aqui corresponde a gl.TEXTURE0
-        }
-
-
-
-        const uniformTilingLocation = this.material.shader.getUniformLocation("uTiling");
-        gl.uniform2fv(uniformTilingLocation, this.material.tiling.toArray());
-
+        // Defina as propriedades e as matrizes no shader
+        const projection = camera.getProjectionMatrix();
+        const view = camera.getViewMatrix();
+        const model = this.transform.getModelMatrix();
+    
+        this.material.shader.setUniformMatrix4fv("uModel", model);
+        this.material.shader.setUniformMatrix4fv("uView", view);
+        this.material.shader.setUniformMatrix4fv("uProjection", projection);
+    
+        // Configure os buffers e atributos
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.mesh.vertexBuffer);
+        this.material.shader.enableAttribute3f(this.gl, "aPosition");
+    
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.mesh.UVBuffer);
+        this.material.shader.enableAttribute2f(this.gl, "aTexCoord");
    
-        // Definição das matrizes de transformação
-        this.setUniformMatrix(gl, this.material.shader, "uTranslationMatrix", Mat4.translate(this.transform.position), "tradução", context);
-        this.setUniformMatrix(gl, this.material.shader, "uRotationMatrix", Mat4.rotate(this.transform.rotation), "rotação", context);
-        this.setUniformMatrix(gl, this.material.shader, "uScaleMatrix", Mat4.scale(this.transform.scale), "escala", context);
-        this.setUniformMatrix(gl, this.material.shader, "u_view", this.camera.getViewMatrix(), "view", context);
-        this.setUniformMatrix(gl, this.material.shader, "u_projection", this.camera.getProjectionMatrix(), "projeção", context);
-
-        // Configuração do modo de renderização
-        switch (this.renderMode) {
-            case RenderMode.SOLID:
-                gl.uniform4fv(this.material.shader.getUniformLocation("uColor"), this.material.color.toVec4());
-                gl.disable(gl.CULL_FACE);
-                gl.enable(gl.DEPTH_TEST);
-                // gl.enable(gl.BLEND);
-                // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-                // gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);
-                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                gl.drawElements(gl.TRIANGLES, this.mesh.vertexIndices.length, gl.UNSIGNED_SHORT, 0);
-               
-            break;
-
-            case RenderMode.WIREFRAME:
-                gl.enable(gl.CULL_FACE);
-                gl.lineWidth(1); 
-                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                gl.drawElements(gl.LINE_STRIP, this.mesh.vertexIndices.length, gl.UNSIGNED_SHORT, 0);
-            break;
-
-            case RenderMode.SOLID_WIRE:
-                gl.uniform4fv(this.material.shader.getUniformLocation("uColor"), this.material.color.toVec4());
-                gl.disable(gl.CULL_FACE);
-                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                gl.drawElements(gl.TRIANGLES, this.mesh.vertexIndices.length, gl.UNSIGNED_SHORT, 0);
-
-                gl.uniform4fv(this.material.shader.getUniformLocation("uColor"),this.material.lineColor.toVec4());
-                gl.enable(gl.CULL_FACE);
-                gl.lineWidth(1); 
-                gl.drawElements(gl.LINE_STRIP, this.mesh.vertexIndices.length, gl.UNSIGNED_SHORT, 0);
-            break;
-        }
-    }
-
-    private setUniformMatrix(gl: WebGLRenderingContext, shader: Shader, uniformName: string, matrix: Mat4, matrixType: string, context: ErrorContext): void {
-        const uniformLocation = shader.getUniformLocation(uniformName);
-        if (uniformLocation !== null) {
-            gl.uniformMatrix4fv(uniformLocation, false, matrix.getData());
+        if (this.material.albedo) {
+            this.gl.activeTexture(this.gl.TEXTURE0);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, this.material.albedo);
+            this.material.shader.setUniform1i("uAlbedo", 0);
+            this.material.shader.setUniform1i("uHasAlbedo", 1); 
         } else {
-            throw new AppError({
-                ...context,
-                message: `Uniform de ${matrixType} '${uniformName}' não encontrado no shader. Verifique se o uniform está corretamente definido no shader.`,
-            });
+            this.material.shader.setUniform1i("uHasAlbedo", 0); 
         }
+    
+        if (this.material.normalMap) {
+            this.gl.activeTexture(this.gl.TEXTURE1);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, this.material.normalMap);
+            this.material.shader.setUniform1i("uNormalMap", 1);
+        }
+    
+        // Desenhe a cena
+
+        const [x, y, z, w] = this.material.color.toVec4();
+        this.material.shader.setUniform4f("uColor", x, y, z, w);
+
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+
+        this.gl.enable(this.gl.DEPTH_TEST);
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
+        
+        this.gl.drawElements(this.gl.TRIANGLES, this.mesh.triangles.length, this.gl.UNSIGNED_SHORT, 0);
+    
+        // Limpeza
+        this.material.shader.disableAttribute(this.gl, "aPosition");
+        this.material.shader.disableAttribute(this.gl, "aTexCoord");
+    
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
+    
+        this.gl.activeTexture(this.gl.TEXTURE0);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+        this.gl.activeTexture(this.gl.TEXTURE1);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
     }
+
+    private drawGizmos() {
+
+        const cameraPosition  = Camera.currentCamera.transform.position;
+
+        const distance = Math.max(0.1, Vec3.distance(this.transform.position, cameraPosition));
+    
+        const scale = 0.1 * distance;
+        
+        //-------------------------------------------------------------------------------------------------------------------
+        Gizmos.color = Color.red;
+        const xEnd = new Vec3(this.transform.position.x + scale, this.transform.position.y, this.transform.position.z);
+        Gizmos.drawLine(this.transform.position, xEnd);
+        Gizmos.drawFillCube(xEnd, new Vec3(0.1 * scale, 0.1 * scale, 0.1 * scale));
+        
+        //-------------------------------------------------------------------------------------------------------------------
+        Gizmos.color = Color.green;
+        const yEnd = new Vec3(this.transform.position.x, this.transform.position.y + scale, this.transform.position.z)
+        Gizmos.drawLine(this.transform.position, yEnd);
+        Gizmos.drawFillCube(yEnd, new Vec3(0.1 * scale, 0.1 * scale, 0.1 * scale));
+        
+        //-------------------------------------------------------------------------------------------------------------------
+        Gizmos.color = Color.blue;
+        const zEnd = new Vec3(this.transform.position.x, this.transform.position.y, this.transform.position.z + scale);
+        Gizmos.drawLine(this.transform.position, zEnd);
+        Gizmos.drawFillCube(zEnd, new Vec3(0.1 * scale, 0.1 * scale, 0.1 * scale));
+    }
+    
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Enum para representar os modos de renderização.
  */
 export enum RenderMode {
-    /**
-     * Renderiza o objeto com uma textura aplicada.
-     */
     TEXTURED = "TEXTURED",
-    
-    /**
-     * Renderiza o objeto com uma cor sólida.
-     */
     SOLID = "SOLID",
-    
-    /**
-     * Renderiza o objeto em modo wireframe (malha de arame).
-     */
     WIREFRAME = "WIREFRAME",
-    
-    /**
-     * Renderiza o objeto com sombreamento básico.
-     */
     SHADED = "SHADED",
-    
-    /**
-     * Renderiza o objeto com efeitos de iluminação avançada.
-     */
     ADVANCED = "ADVANCED",
-    
-    SOLID_WIRE  = "SOLIDWIRE"
+    SOLID_WIRE = "SOLIDWIRE"
 }
+
+
+// class ShadowMap {
+//     public texture: WebGLTexture | null = null;
+//     private framebuffer: WebGLFramebuffer | null = null;
+//     public material: Material = new Material();
+
+//     constructor(private gl: WebGLRenderingContext, width: number, height: number) {
+//         this.texture = gl.createTexture();
+//         gl.bindTexture(gl.TEXTURE_2D, this.texture);
+//         gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT16, width, height, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null);
+//         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+//         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+//         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+//         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+//         this.framebuffer = gl.createFramebuffer();
+//         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+//         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.texture, 0);
+//         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+//         this.setupShadowShader(this.material.shader);
+//     }
+
+//     public bind(): void {
+//         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.framebuffer);
+//     }
+
+//     public unbind(): void {
+//         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+//     }
+
+//     public setupShadowShader(shader: Shader): void {
+//         shader.setVertSource(`
+//             attribute vec4 aPosition;
+//             uniform mat4 uLightMVP;
+//             void main() {
+//                 gl_Position = uLightMVP * aPosition;
+//             }
+//         `);
+    
+//         shader.setFragSource(`
+//             // Fragment Shader para o ShadowMap
+//             void main() {
+//                 // Defina uma cor fixa (não usamos gl_FragDepth em WebGL 1.0)
+//                 gl_FragColor = vec4(0.0);
+//             }
+//         `);
+    
+//         shader.compile();
+//     }
+// }

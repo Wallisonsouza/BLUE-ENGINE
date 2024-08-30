@@ -1,5 +1,4 @@
 // import GameObject from "../components/GameObject";
-// import Rect from "../components/Rect";
 
 // export default class Component {
     

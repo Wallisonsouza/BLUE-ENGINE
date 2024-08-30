@@ -218,5 +218,12 @@ export default class Vec3 implements IVector3 {
         }
         return float32Array;
     }
+
+    static distance(v1: Vec3, v2: Vec3): number {
+        const dx = v1.x - v2.x;
+        const dy = v1.y - v2.y;
+        const dz = v1.z - v2.z;
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
     
 }

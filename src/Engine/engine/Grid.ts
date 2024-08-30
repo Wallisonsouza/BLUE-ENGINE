@@ -1,8 +1,8 @@
-import EngineCache from "../Cache/EngineCache";
-import Material from "../Core/Inplementations/Material";
-import Shader from "../Core/Inplementations/Shader";
-import Transform from "../Core/Inplementations/Transform";
-import Mesh from "../graphycs/Mesh";
+// import EngineCache from "../Cache/EngineCache";
+// import Material from "../Core/Inplementations/Material";
+// import Shader3D from "../Core/Inplementations/Shader";
+// import Transform from "../Core/Inplementations/Transform";
+// import MeshAuthor from "../graphycs/Mesh";
 
 // export default class Grid extends Scrypt {
 

@@ -13,6 +13,18 @@ export default class ScryptManager {
         }
     }
 
+    public static async loadResources(): Promise<void> {
+        try {
+            const loadPromises = this.scrypts.map(scrypt => scrypt.loadResources());
+            await Promise.all(loadPromises);
+            
+            console.log('Todos os recursos foram carregados com sucesso.');
+        } catch (error) {
+            console.error('Erro ao carregar recursos:', error);
+            throw error;
+        }
+    }
+    
     public static awake(): void {
         this.scrypts.forEach(scrypt => {scrypt.awake();});
     }

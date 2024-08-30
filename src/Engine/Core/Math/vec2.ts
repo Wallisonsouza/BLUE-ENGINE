@@ -11,6 +11,10 @@ export  default class Vec2 {
         return new Vec2(1, 1);
     }
 
+    public static get zero(){
+        return new Vec2(0, 0);
+    }
+
     public toArray(){
         return [this.x, this.y]
     }

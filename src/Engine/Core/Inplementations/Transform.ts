@@ -26,7 +26,7 @@ export default class Transform implements ITransform {
     }
    
     getForwardDirection(): Vec3 {
-        return Quat.rotateVector(this.rotation, Vec3.forward);
+        return Quat.multiplyVec3(this.rotation, Vec3.forward);
     }
     getUpDirection(): Vec3 {
         return Quat.multiplyVec3(this.rotation, new Vec3(0, 1, 0));
@@ -35,22 +35,24 @@ export default class Transform implements ITransform {
     public translate(newTranslation: Vec3){
         this.position.increment(newTranslation);
     }
-
-    public rotate(b: Quat): void {
-        const rot = this.rotation;
-        
-        const x = rot.w * b.x + rot.x * b.w + rot.y * b.z - rot.z * b.y;
-        const y = rot.w * b.y + rot.y * b.w + rot.z * b.x - rot.x * b.z;
-        const z = rot.w * b.z + rot.z * b.w + rot.x * b.y - rot.y * b.x;
-        const w = rot.w * b.w - rot.x * b.x - rot.y * b.y - rot.z * b.z;
-    
-        this.rotation.x = x;
-        this.rotation.y = y;
-        this.rotation.z = z;
-        this.rotation.w = w;
-    }
     
     public rotateAxis(axis: Vec3): Vec3 {
         return Quat.rotateVector(this.rotation, axis);
+    }
+
+    public getModelMatrix(){
+        return Mat4.model(this.position, this.rotation, this.scale);
+    }
+
+    public getRotationMatrix(){
+        return Mat4.rotate(this.rotation);
+    }
+
+    public getTranslationMatrix(){
+        return Mat4.translate(this.position);
+    }
+
+    public getScaleMatrix(){
+        return Mat4.scale(this.scale);
     }
 }

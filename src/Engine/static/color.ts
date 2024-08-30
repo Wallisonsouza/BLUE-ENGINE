@@ -33,4 +33,15 @@ export default class Color {
     public toVec4(): [number, number, number, number] {
         return [this.r, this.g, this.b, this.a];
     }
+
+    public static hexToRGBA(hex) {
+        hex = hex.replace(/^#/, '');
+
+        return new Color(
+            parseInt(hex.substring(0, 2), 16) / 255,
+            parseInt(hex.substring(2, 4), 16) / 255,
+            parseInt(hex.substring(4, 6), 16) / 255,
+            1
+        )
+    }
 }

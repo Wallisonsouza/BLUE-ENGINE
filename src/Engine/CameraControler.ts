@@ -21,10 +21,10 @@ export default class CameraController {
 
     aceleration: boolean = true;
 
-    public update(camera: Camera, deltaTime: number): void {
-        this.handleInput(camera, deltaTime);
-        this.smoothMovement(camera, deltaTime);
-        this.smoothRotation(camera, deltaTime);
+    public update(camera: Camera): void {
+        this.handleInput(camera, Time.deltaTime);
+        this.smoothMovement(camera, Time.deltaTime);
+        this.smoothRotation(camera, Time.deltaTime);
     }
 
     private handleInput(camera: Camera, deltaTime: number): void {
@@ -45,11 +45,9 @@ export default class CameraController {
             }
 
             if (Input.getKey(KeyCode.W)) {
-            
                 movement = camera.transform.getBackwardDirection();
             }
             if (Input.getKey(KeyCode.S)) {
-                
                 movement = camera.transform.getForwardDirection();
             }
             if (Input.getKey(KeyCode.D)) {

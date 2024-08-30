@@ -6,8 +6,4 @@ export default class Entity {
     private static generateId(): number {
         return ++Entity.lastId;
     }
-
-    constructor() {
-        // this.id = Entity.generateId();
-    }
 }

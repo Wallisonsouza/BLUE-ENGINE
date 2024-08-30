@@ -1,19 +1,37 @@
 // import { importer } from "../Figma/importer";
 import ScryptManager from "./Managers/ScryptManager";
 import Time from "./static/Time";
-import WebGLLink from "./engine/webg-link";
 import Input from "./Input/Input";
 import EngineCache from "./Cache/EngineCache";
-
+import { Renderer } from "./graphycs/SpriteRenderer";
 
 export default class Engine {
     private time: Time;
-    private glLink: WebGLLink;
     private canvas: HTMLCanvasElement;
+   
     fp = document.getElementById("fps") as HTMLDivElement;
     constructor(canvas: HTMLCanvasElement) {
-        this.glLink = new WebGLLink(canvas);
         this.canvas = canvas;
+
+        let context: WebGLRenderingContext | null = canvas.getContext("webgl2");
+
+        if (!context) {
+            console.warn("API WebGL2 não disponível, tentando WebGL...");
+
+            context = canvas.getContext("webgl");
+
+            if (!context) {
+                console.error("Falha ao obter o contexto WebGL. Seu navegador pode não suportar WebGL.");
+               
+            } else {
+                console.log("Usando WebGL como alternativa.");
+            }
+        } else {
+            console.log("Contexto WebGL2 obtido com sucesso.");
+        }
+        
+        EngineCache.gl = context;
+        Renderer.wegl2 = context;
 
         this.time = new Time(
             this.awake.bind(this),
@@ -35,14 +53,10 @@ export default class Engine {
         this.time.start();
     }
 
-    public async loadResources(){
-        
+    public async loadResources() {
+        await ScryptManager.loadResources();
     }
 
-    private simulateDelay(ms: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    
     private awake(){
         ScryptManager.awake();
     }
@@ -57,22 +71,10 @@ export default class Engine {
     }
 
     private update(): void {
-     
-        // // const context = this.ctx;
-        // // RendererManager.update(context);
-        // // MouseInput.clear(); 
-        // // KeyInput.clear();
 
-        if(this.glLink.gl) {
-            
-            this.glLink.gl.viewport(0, 0, window.innerWidth, window.innerHeight);
-            this.glLink.gl.clearColor(0.5, 0.5, 0.5, 1)
-         
-        }
-        
-        
+        EngineCache.gl.viewport(0, 0, this.canvas.width, this.canvas.height)
         this.fp.innerText = Time.fps.toString() +"FPS " +"_____"+ window.innerWidth + "x" + window.innerHeight + "px"
-        ScryptManager.update()
+        ScryptManager.update();
         Input.update();
     }
     
@@ -86,9 +88,6 @@ export default class Engine {
     public stop(): void {
         this.time.stop();
     }
-
-  
-   
     
     private lateUpdate(): void {
         ScryptManager.lateUpdate();
@@ -119,5 +118,3 @@ export default class Engine {
       this.canvas.height = height;
     }
 }
-
-    
