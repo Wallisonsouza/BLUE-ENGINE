@@ -1,7 +1,6 @@
 import CameraController from "./Engine/CameraControler";
 import MonoComportament from "./Engine/components/MonoComportament";
 import Material3D from "./Engine/Core/Inplementations/Material";
-import { Shader } from "./Shader/Shader";
 import Mesh from "./Engine/graphycs/Mesh";
 import MeshBuilder from "./Engine/graphycs/MeshBuilder";
 import Camera from "./Engine/Core/Inplementations/Camera";
@@ -9,7 +8,9 @@ import HDRLoader from "../plugins/hdr-loader/hdrLoader";
 import GameEntity from "./Engine/components/GameObject";
 import Renderer from "./Engine/graphycs/Renderer";
 import MeshRenderer from "./Engine/graphycs/MeshRenderer";
-
+import Quat from "./Engine/Core/Math/Quat";
+import Vec3 from "./Engine/Core/Math/Vec3";
+import Time from "./Engine/static/Time";
 
 export default class SimpleEngine extends MonoComportament {
 
@@ -39,7 +40,9 @@ export default class SimpleEngine extends MonoComportament {
     }
 
     public start(): void {
-  
+        
+        Camera.editorCamera.invert = true;
+        Camera.currentCamera.farPlane = 2000;
         this.skyDome = MeshBuilder.createSphere(100, 64, 64);
         this.skyDome.compile(); 
     
@@ -57,22 +60,24 @@ export default class SimpleEngine extends MonoComportament {
         this.cubeMeshRenderer = new MeshRenderer();
         this.cubeMeshRenderer.setMesh(this.cubeMesh);
         this.cubeMeshRenderer.material = cubeMaterial;
+        this.cubeMeshRenderer.transform.position = new Vec3(0, 0, 2)
         cubeMaterial.setAlbedo("./src/Engine/Assets/2D/Textures/pngegg.png");
         // cubeMaterial.setNormalMap("./Assets/textures/normalMap.png");
         // this.skyBox = new Skybox(this.texture, this.camera);
     }
 
     public update(): void { 
-   
+
+        this.meshRenderer.render();
         this.cubeMeshRenderer.render();
-        Camera.currentCamera.aspectRatio = window.innerWidth / window.innerHeight;
-        this.cameraControle.update(Camera.currentCamera); 
-       
+        
+        const aspect = window.innerWidth / window.innerHeight;
+        Camera.currentCamera.aspectRatio = aspect;
+        Camera.gameCamera.aspectRatio = aspect;
+        Camera.currentCamera.aspectRatio = aspect;
+
+        this.cameraControle.update(Camera.editorCamera); 
+        Camera.gameCamera.drawGizmos();
     }
 }
 
-const gameEntity = new GameEntity();
-gameEntity.addComponent(Camera);
-
-const meshRenderer = gameEntity.addComponent(MeshRenderer);
-console.log(meshRenderer)

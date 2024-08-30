@@ -1,4 +1,4 @@
-import Vec3 from "../../graphycs/vec3";
+import Vec3 from "../Math/Vec3";
 
 /**
  * Representação de um vetor 3D.

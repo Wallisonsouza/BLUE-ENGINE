@@ -1,14 +1,9 @@
-import Camera from "./Engine/Core/Inplementations/Camera";
 import ScryptManager from "./Engine/Managers/ScryptManager";
-import GameEntity from "./Engine/components/GameObject";
 import Engine from "./Engine/engine";
-import MeshRenderer from "./Engine/graphycs/MeshRenderer";
 import Events from "./Events";
 import SimpleEngine from "./SimpleEngine";
 
-
 function getCanvas(canvasId: string) {
-
     const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
 
     if(!canvas){
@@ -19,7 +14,6 @@ function getCanvas(canvasId: string) {
 }
 
 async function initialize() {
-
     const canvas = getCanvas("canvas");
     Events.addBlockResizeEvents();
     Events.addCanvasResize(canvas);

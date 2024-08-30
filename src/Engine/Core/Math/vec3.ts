@@ -39,6 +39,9 @@ export default class Vec3 implements IVector3 {
         return new Vec3(this.x * vector.x, this.y * vector.y, this.z * vector.z);
     }
 
+    multiplyScalar(scalar: number): Vec3 {
+        return new Vec3(this.x * scalar, this.y * scalar, this.z * scalar);
+    }
     scale(scalar: number): Vec3 {
         return new Vec3(this.x * scalar, this.y * scalar, this.z * scalar);
     }

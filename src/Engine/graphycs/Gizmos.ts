@@ -1,5 +1,6 @@
 import { Shader } from "../../Shader/Shader";
 import Camera from "../Core/Inplementations/Camera";
+import Transform from "../Core/Inplementations/Transform";
 import Vec3 from "../Core/Math/Vec3";
 import Color from "../static/color";
 import Renderer from "./Renderer";
@@ -32,6 +33,8 @@ export default class Gizmos {
         if (!Gizmos.indexBuffer) {
             Gizmos.indexBuffer = gl.createBuffer();
         }
+
+        if(!Gizmos.lineShader) return;
 
         const lineVertices = new Float32Array([
             start.x, start.y, start.z,
@@ -90,6 +93,9 @@ export default class Gizmos {
         if (!Gizmos.indexBuffer) {
             Gizmos.indexBuffer = gl.createBuffer();
         }
+
+
+        if(!Gizmos.cubeShader) return;
     
         const halfSizeX = size.x / 2;
         const halfSizeY = size.y / 2;
@@ -167,7 +173,7 @@ export default class Gizmos {
         // Definir atributos
         Gizmos.cubeShader.enableAttribute3f(gl, "aPosition");
         gl.bindBuffer(gl.ARRAY_BUFFER, Gizmos.vertexBuffer);
-    
+        
         Gizmos.cubeShader.setUniformMatrix4fv("uView", camera.getViewMatrix());
         Gizmos.cubeShader.setUniformMatrix4fv("uProjection", camera.getProjectionMatrix());
         Gizmos.cubeShader.setUniform4fv("uColor", Gizmos.color.toVec4());
@@ -191,7 +197,6 @@ export default class Gizmos {
 
         const vertexShaderSource = `
             attribute vec3 aPosition;
-            uniform mat4 uModel;
             uniform mat4 uView;
             uniform mat4 uProjection;
             void main() {
@@ -220,7 +225,6 @@ export default class Gizmos {
 
         const vertexShaderSource = `
             attribute vec3 aPosition;
-            uniform mat4 uModel;
             uniform mat4 uView;
             uniform mat4 uProjection;
             void main() {

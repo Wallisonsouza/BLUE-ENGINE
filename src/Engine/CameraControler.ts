@@ -21,10 +21,14 @@ export default class CameraController {
 
     aceleration: boolean = true;
 
+
+ 
+
     public update(camera: Camera): void {
         this.handleInput(camera, Time.deltaTime);
         this.smoothMovement(camera, Time.deltaTime);
         this.smoothRotation(camera, Time.deltaTime);
+        this.toogleCamera();
     }
 
     private handleInput(camera: Camera, deltaTime: number): void {
@@ -81,6 +85,24 @@ export default class CameraController {
         const newRotation = Quat.slerp(oldRotation, rotation, this.smoothingFactor * deltaTime);
         camera.transform.rotation = newRotation;
          camera.transform.rotation = newRotation;
+    }
+
+
+    private gameCamera = Camera.gameCamera;
+    private editorCamera = Camera.editorCamera;
+    private currentCamera: Camera = this.editorCamera;
+
+    private toogleCamera() {
+        if (Input.getKeyDown(KeyCode.C)) {
+            // Alterna entre as câmeras
+            if (this.currentCamera === this.gameCamera) {
+                this.currentCamera = this.editorCamera;
+            } else {
+                this.currentCamera = this.gameCamera;
+            }
+
+            Camera.currentCamera = this.currentCamera;
+        }
     }
 
 

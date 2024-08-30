@@ -2,13 +2,11 @@ import Mesh from "./Mesh";
 import Camera from "../Core/Inplementations/Camera";
 import Transform from "../Core/Inplementations/Transform";
 import Material from "../Core/Inplementations/Material";
-import Gizmos from "./Gizmos";
-import Vec3 from "../Core/Math/Vec3";
-import Color from "../static/color";
 import Renderer from "./Renderer";
 
+
 export default class MeshRenderer extends Renderer {
-    public transform: Transform= new Transform();
+    public transform: Transform = new Transform();
     public mesh: Mesh | null = null;
     public material: Material | null;
     public renderMode: RenderMode = RenderMode.SOLID;
@@ -20,7 +18,7 @@ export default class MeshRenderer extends Renderer {
 
     render(): void {
         this.renderScene();
-        this.drawGizmos();
+        this.transform.drawGizmos();
     }
     
     private renderScene() {
@@ -88,33 +86,7 @@ export default class MeshRenderer extends Renderer {
         this.gl.bindTexture(this.gl.TEXTURE_2D, null);
     }
 
-    private drawGizmos() {
-
-        const cameraPosition  = Camera.currentCamera.transform.position;
-
-        const distance = Math.max(0.1, Vec3.distance(this.transform.position, cameraPosition));
-    
-        const scale = 0.1 * distance;
-        
-        //-------------------------------------------------------------------------------------------------------------------
-        Gizmos.color = Color.red;
-        const xEnd = new Vec3(this.transform.position.x + scale, this.transform.position.y, this.transform.position.z);
-        Gizmos.drawLine(this.transform.position, xEnd);
-        Gizmos.drawFillCube(xEnd, new Vec3(0.1 * scale, 0.1 * scale, 0.1 * scale));
-        
-        //-------------------------------------------------------------------------------------------------------------------
-        Gizmos.color = Color.green;
-        const yEnd = new Vec3(this.transform.position.x, this.transform.position.y + scale, this.transform.position.z)
-        Gizmos.drawLine(this.transform.position, yEnd);
-        Gizmos.drawFillCube(yEnd, new Vec3(0.1 * scale, 0.1 * scale, 0.1 * scale));
-        
-        //-------------------------------------------------------------------------------------------------------------------
-        Gizmos.color = Color.blue;
-        const zEnd = new Vec3(this.transform.position.x, this.transform.position.y, this.transform.position.z + scale);
-        Gizmos.drawLine(this.transform.position, zEnd);
-        Gizmos.drawFillCube(zEnd, new Vec3(0.1 * scale, 0.1 * scale, 0.1 * scale));
-    }
-    
+   
 }
 
 /**

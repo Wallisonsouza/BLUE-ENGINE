@@ -1,6 +1,9 @@
 import Component from "../components/Component";
 import { Material2D } from "../Core/Inplementations/Material";
-import Renderer from "./Renderer";
+
+export class Renderer extends Component {
+    public static wegl2: WebGL2RenderingContext;
+}
 
 export default class SpriteRenderer extends Renderer {
     public material2D: Material2D = new Material2D;

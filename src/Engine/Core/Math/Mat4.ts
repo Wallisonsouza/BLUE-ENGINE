@@ -186,4 +186,5 @@ export default class Mat4 {
         }
         return result;
     }
+
 }
