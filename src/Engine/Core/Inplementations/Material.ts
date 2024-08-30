@@ -1,5 +1,5 @@
 import Color from "../../static/color";
-import Vec2 from "../Math/vec2";
+import Vec2 from "../Math/Vec2";
 import { Shader } from "../../../Shader/Shader";
 import EngineCache from "../../Cache/EngineCache";
 import { MaterialUtil } from "../../static/Util";

@@ -1,6 +1,6 @@
 
 import Mathf from "./Mathf";
-import Vec3 from "./vec3";
+import Vec3 from "./Vec3";
 
 export default class Quat{
     public x: number;

@@ -1,6 +1,6 @@
 import Mathf from "./Mathf";
-import Quat from "./quat";
-import Vec3 from "./vec3";
+import Quat from "./Quat";
+import Vec3 from "./Vec3";
 
 export default class Mat4 {
     private _data: Float32Array;

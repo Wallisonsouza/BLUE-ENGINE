@@ -1,14 +1,14 @@
-import Scrypt from "../components/base_mono";
+import MonoComportament from "../components/base_mono";
 
 export default class ScryptManager {
 
-    private static scrypts: Scrypt[] = [];
+    private static scrypts: MonoComportament[] = [];
 
-    public static getScrypts(): Scrypt[] {
+    public static getScrypts(): MonoComportament[] {
         return this.scrypts;
     }
-    public static addNewScrypt(scrypt: Scrypt): void {
-        if(scrypt instanceof Scrypt && !this.scrypts.includes(scrypt)) {
+    public static addNewScrypt(scrypt: MonoComportament): void {
+        if(scrypt instanceof MonoComportament && !this.scrypts.includes(scrypt)) {
             this.scrypts.push(scrypt);
         }
     }

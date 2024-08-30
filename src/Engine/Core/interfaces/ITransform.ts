@@ -1,5 +1,5 @@
-import Quat from "../Math/quat";
-import Vec3 from "../Math/vec3";
+import Quat from "../Math/Quat";
+import Vec3 from "../Math/Vec3";
 
 export interface ITransform {
     /**

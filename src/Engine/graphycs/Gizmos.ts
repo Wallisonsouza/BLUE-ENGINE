@@ -1,7 +1,7 @@
 import { Shader } from "../../Shader/Shader";
 import EngineCache from "../Cache/EngineCache";
 import Camera from "../Core/Inplementations/Camera";
-import Vec3 from "../Core/Math/vec3";
+import Vec3 from "../Core/Math/Vec3";
 import Color from "../static/color";
 import Mesh from "./Mesh";
 import MeshBuilder from "./MeshBuilder";

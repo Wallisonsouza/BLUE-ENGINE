@@ -1,7 +1,7 @@
 import Camera from "./Core/Inplementations/Camera";
 import Mathf from "./Core/Math/Mathf";
-import Quat from "./Core/Math/quat";
-import Vec3 from "./Core/Math/vec3";
+import Quat from "./Core/Math/Quat";
+import Vec3 from "./Core/Math/Vec3";
 import { KeyCode } from "./Enum/KeyCode";
 import Input from "./Input/Input";
 import Time from "./static/Time";

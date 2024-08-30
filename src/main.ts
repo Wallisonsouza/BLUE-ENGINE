@@ -1,6 +1,9 @@
 import ScryptManager from "./Engine/Managers/ScryptManager";
 import Engine from "./Engine/engine";
+import Events from "./Events";
 import SimpleEngine from "./SimpleEngine";
+
+Events.addBlockResizeEvents();
 
 ScryptManager.addNewScrypt(new SimpleEngine());
 
@@ -26,53 +29,3 @@ async function initialize() {
 }
 
 initialize();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-window.addEventListener("wheel", (event) => {
-
-    if(event.ctrlKey) {
-        event.preventDefault();
-    }
-    
-}, {passive: false});
-
-window.addEventListener("gesturestart", function(event) {
-    event.preventDefault();
-});
-
-window.addEventListener("gesturechange", function(event) {
-    event.preventDefault();
-});
-
-window.addEventListener("gesture", function(event) {
-    event.preventDefault();
-});
-
-window.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-});

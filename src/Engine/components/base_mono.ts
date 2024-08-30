@@ -1,8 +1,5 @@
-// import GameObject from "../components/GameObject";
-// import CollisionData from "./data_collision";
 
-export default class Scrypt {
-
+export default class MonoComportament {
     public async loadResources(){}
     public awake(): void {}
     public start(): void {}
@@ -11,11 +8,14 @@ export default class Scrypt {
     public lateUpdate(): void {}
     public onDrawGizmos(): void{}
     public onGUI(): void{}
-
-    // public onCollisionEnter(_data: CollisionData) {}
-    // public onCollisionStay(_data: CollisionData) {}
-    // public onCollisionExit(_data: CollisionData) {}
-    // public onMouseEnter(entity: GameObject) {}
-    // public onMouseExit(entity: GameObject) {}
-    // public onMouseStay(entity: GameObject) {}
+  
 }
+
+// import GameObject from "../components/GameObject";
+// import CollisionData from "./data_collision";
+// public onCollisionEnter(_data: CollisionData) {}
+// public onCollisionStay(_data: CollisionData) {}
+// public onCollisionExit(_data: CollisionData) {}
+// public onMouseEnter(entity: GameObject) {}
+// public onMouseExit(entity: GameObject) {}
+// public onMouseStay(entity: GameObject) {}

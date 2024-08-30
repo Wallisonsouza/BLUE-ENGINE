@@ -1,6 +1,6 @@
 import Mat4 from "../Math/Mat4";
-import Quat from "../Math/quat";
-import Vec3 from "../Math/vec3";
+import Quat from "../Math/Quat";
+import Vec3 from "../Math/Vec3";
 import { ITransform } from "../interfaces/ITransform";
 /**
  * Representa a transformação de um objeto no espaço 3D, incluindo sua posição, rotação e escala.

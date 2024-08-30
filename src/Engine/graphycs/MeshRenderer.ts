@@ -4,7 +4,7 @@ import Camera from "../Core/Inplementations/Camera";
 import Transform from "../Core/Inplementations/Transform";
 import Material from "../Core/Inplementations/Material";
 import Gizmos from "./Gizmos";
-import Vec3 from "../Core/Math/vec3";
+import Vec3 from "../Core/Math/Vec3";
 import Color from "../static/color";
 import { Renderer } from "./SpriteRenderer";
 

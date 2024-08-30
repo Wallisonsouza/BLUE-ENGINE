@@ -1,7 +1,7 @@
-import GameObject from "../components/GameObject";
+import GameEntity from "../components/GameObject";
 
 export default class Component {
 
-    public gameObject: GameObject;
+    public gameObject: GameEntity;
 
 }

@@ -1,7 +1,7 @@
 import Component from "../graphycs/Extension";
 import List from "./List";
 
-export default class GameObject {
+export default class GameEntity {
     
     public layer: number;
     public active: boolean;
@@ -92,6 +92,22 @@ export default class GameObject {
         `;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //     /**
 //  * Adiciona uma lista de componentes à lista de componentes do GameObject.

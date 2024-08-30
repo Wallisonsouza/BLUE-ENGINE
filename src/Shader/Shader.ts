@@ -2,7 +2,7 @@ import EngineCache from "../Engine/Cache/EngineCache";
 import Mat4 from "../Engine/Core/Math/Mat4";
 import IShader from "./IShader";
 import ShaderUtil from "./Shader.Util";
-import Vec2 from "../Engine/Core/Math/vec2";
+import Vec2 from "../Engine/Core/Math/Vec2";
 
 export class Shader implements IShader {
     private vertSource: string = `
@@ -45,7 +45,7 @@ export class Shader implements IShader {
     `;
 
     private gl: WebGL2RenderingContext;
-    private program: WebGLProgram;
+    private program: WebGLProgram | null;
 
     private attributeCache: Map<string, number> = new Map();
     private uniformCache: Map<string, WebGLUniformLocation> = new Map();
@@ -150,14 +150,6 @@ export class Shader implements IShader {
         const location = this.getUniformLocation(name);
         if (location) {
             this.gl.uniform4fv(location, value);
-        }
-    }
-    public setUniformSamplerCube(name: string, texture: WebGLTexture | null): void {
-        const location = this.gl.getUniformLocation(this.program, name);
-        if (location) {
-            this.gl.uniform1i(location, 0); // Define o local do sampler na unidade 0
-            this.gl.activeTexture(this.gl.TEXTURE0); // Ativa a unidade de textura 0
-            this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, texture); // Associa a textura à unidade de textura ativa
         }
     }
 

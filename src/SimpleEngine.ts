@@ -1,6 +1,6 @@
 import EngineCache from "./Engine/Cache/EngineCache";
 import CameraController from "./Engine/CameraControler";
-import Scrypt from "./Engine/components/base_mono";
+import MonoComportament from "./Engine/components/base_mono";
 import Material3D from "./Engine/Core/Inplementations/Material";
 import { Shader } from "./Shader/Shader";
 import Mesh from "./Engine/graphycs/Mesh";
@@ -9,7 +9,7 @@ import MeshRenderer, { RenderMode } from "./Engine/graphycs/MeshRenderer";
 import Camera from "./Engine/Core/Inplementations/Camera";
 import HDRLoader from "../plugins/hdr-loader/hdrLoader";
 
-export default class SimpleEngine extends Scrypt {
+export default class SimpleEngine extends MonoComportament {
 
     meshRenderer: MeshRenderer;
     material: Material3D;

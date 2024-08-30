@@ -1,6 +1,4 @@
-// Defina PI se necessário
 const float PI = 3.14159265;
-uniform 
 
 // Função Fresnel-Schlick
 float fresnelSchlick(float cosTheta, float F0) {
