@@ -1,4 +1,3 @@
-import EngineCache from "../Cache/EngineCache";
 import Vec2 from "../Core/Math/Vec2";
 import Vec3 from "../Core/Math/Vec3";
 import Mesh from "./Mesh";
@@ -145,7 +144,7 @@ export default class MeshBuilder {
         mesh.triangles = indices;
 
         // Compila o mesh
-        mesh.compile(EngineCache.gl);
+        mesh.compile();
 
         return mesh;
     }

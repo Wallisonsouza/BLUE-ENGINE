@@ -52,7 +52,7 @@
 //     }
 // }
 
-import GameObject from "../components/GameObject";
+import GameObject from "./GameObject";
 
 /**
  * Classe que representa a hierarquia de entidades
@@ -84,14 +84,4 @@ export default class Hierarchy {
         this.addGameObject(entity);
         return entity;
     }
-
-    // public getCamera(): Camera | null {
-    //     let camera: Camera | null = null;
-    //     this._gameObjects.forEach((entity) => {
-    //         if (entity.hasComponent(Camera)) {
-    //             camera = entity.getComponent(Camera);
-    //         }
-    //     });
-    //     return camera;
-    // }
 }

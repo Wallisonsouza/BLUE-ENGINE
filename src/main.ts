@@ -1,11 +1,11 @@
+import Camera from "./Engine/Core/Inplementations/Camera";
 import ScryptManager from "./Engine/Managers/ScryptManager";
+import GameEntity from "./Engine/components/GameObject";
 import Engine from "./Engine/engine";
+import MeshRenderer from "./Engine/graphycs/MeshRenderer";
 import Events from "./Events";
 import SimpleEngine from "./SimpleEngine";
 
-Events.addBlockResizeEvents();
-
-ScryptManager.addNewScrypt(new SimpleEngine());
 
 function getCanvas(canvasId: string) {
 
@@ -20,8 +20,12 @@ function getCanvas(canvasId: string) {
 
 async function initialize() {
 
-    const engine = new Engine(getCanvas("canvas"));
-  
+    const canvas = getCanvas("canvas");
+    Events.addBlockResizeEvents();
+    Events.addCanvasResize(canvas);
+    
+    const engine = new Engine(canvas);
+    ScryptManager.addNewScrypt(new SimpleEngine());
     await engine.loadResources();
     engine.initialize();
 
@@ -29,3 +33,4 @@ async function initialize() {
 }
 
 initialize();
+

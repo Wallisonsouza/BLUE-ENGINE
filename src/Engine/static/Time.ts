@@ -15,13 +15,13 @@ export default class Time {
     private initialized: boolean = false;
 
     constructor(
-        private readonly awakeCallback: () => void,
-        private readonly startCallback: () => void,
-        private readonly updateCallback: () => void,
-        private readonly fixedUpdateCallback: () => void,
-        private readonly lateUpdateCallback: () => void,
-        private readonly onDrawGizmosCallback: () => void,
-        private readonly onGUICallback: () => void
+        private readonly awakeCallback:             () => void,
+        private readonly startCallback:             () => void,
+        private readonly updateCallback:            () => void,
+        private readonly fixedUpdateCallback:       () => void,
+        private readonly lateUpdateCallback:        () => void,
+        private readonly onDrawGizmosCallback:      () => void,
+        private readonly onGUICallback:             () => void
     ) {}
 
     public start(): void {

@@ -1,18 +1,15 @@
 import { Shader } from "../../Shader/Shader";
-import EngineCache from "../Cache/EngineCache";
 import Camera from "../Core/Inplementations/Camera";
 import Vec3 from "../Core/Math/Vec3";
 import Color from "../static/color";
-import Mesh from "./Mesh";
-import MeshBuilder from "./MeshBuilder";
-import { Renderer } from "./SpriteRenderer";
+import Renderer from "./Renderer";
+
 
 export default class Gizmos {
 
     private static lineShader: Shader | null = null;
     private static vertexBuffer: WebGLBuffer | null = null;
     private static indexBuffer: WebGLBuffer | null = null;
-    private static mesh: Mesh | null = null;
     private static cubeShader: Shader | null = null;
     public static color: Color = Color.white;
 
@@ -75,7 +72,7 @@ export default class Gizmos {
     }
 
     public static drawFillCube(center: Vec3, size: Vec3) {
-        const gl = EngineCache.gl;
+        const gl = Renderer.wegl2;
         const camera = Camera.currentCamera;
     
         if (!gl || !camera) {
@@ -189,16 +186,9 @@ export default class Gizmos {
     }
 
     private static createLineShader() {
-        const gl = EngineCache.gl;
 
         const shader = new Shader();
 
-        if (!gl) {
-            console.error("WebGL context not found in EngineCache.");
-            return null;
-        }
-
-        // Definição dos shaders (Exemplos de código GLSL)
         const vertexShaderSource = `
             attribute vec3 aPosition;
             uniform mat4 uModel;
@@ -225,12 +215,6 @@ export default class Gizmos {
     }
 
     private static createCubeShader(): Shader | null {
-        const gl = EngineCache.gl;
-
-        if (!gl) {
-            console.error("WebGL context not found in EngineCache.");
-            return null;
-        }
 
         const shader = new Shader();
 

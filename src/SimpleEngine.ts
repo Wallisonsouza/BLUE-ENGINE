@@ -1,13 +1,15 @@
-import EngineCache from "./Engine/Cache/EngineCache";
 import CameraController from "./Engine/CameraControler";
-import MonoComportament from "./Engine/components/base_mono";
+import MonoComportament from "./Engine/components/MonoComportament";
 import Material3D from "./Engine/Core/Inplementations/Material";
 import { Shader } from "./Shader/Shader";
 import Mesh from "./Engine/graphycs/Mesh";
 import MeshBuilder from "./Engine/graphycs/MeshBuilder";
-import MeshRenderer, { RenderMode } from "./Engine/graphycs/MeshRenderer";
 import Camera from "./Engine/Core/Inplementations/Camera";
 import HDRLoader from "../plugins/hdr-loader/hdrLoader";
+import GameEntity from "./Engine/components/GameObject";
+import Renderer from "./Engine/graphycs/Renderer";
+import MeshRenderer from "./Engine/graphycs/MeshRenderer";
+
 
 export default class SimpleEngine extends MonoComportament {
 
@@ -28,8 +30,7 @@ export default class SimpleEngine extends MonoComportament {
             const hdr = await HDRLoader.processHDRImage("./Assets/HDR/little_paris_eiffel_tower_4k(1).hdr");
             console.log('HDR carregado com sucesso:', hdr);
 
-            const gl = EngineCache.gl;
-            this.texture = HDRLoader.createWebGLTexture(gl, hdr);
+            this.texture = HDRLoader.createWebGLTexture(Renderer.wegl2, hdr);
 
         } catch (error) {
             console.error('Erro ao carregar o HDR:', error);
@@ -40,7 +41,7 @@ export default class SimpleEngine extends MonoComportament {
     public start(): void {
   
         this.skyDome = MeshBuilder.createSphere(100, 64, 64);
-        this.skyDome.compile(EngineCache.gl); 
+        this.skyDome.compile(); 
     
         this.material = new Material3D();
         this.material.albedo = this.texture;
@@ -51,7 +52,7 @@ export default class SimpleEngine extends MonoComportament {
 
         //-------------------------------------------------------------
         this.cubeMesh = MeshBuilder.createSquare();
-        this.cubeMesh.compile(EngineCache.gl);
+        this.cubeMesh.compile();
         const cubeMaterial = new Material3D();
         this.cubeMeshRenderer = new MeshRenderer();
         this.cubeMeshRenderer.setMesh(this.cubeMesh);
@@ -62,12 +63,16 @@ export default class SimpleEngine extends MonoComportament {
     }
 
     public update(): void { 
-        const gl = EngineCache.gl;
    
         this.cubeMeshRenderer.render();
-    
         Camera.currentCamera.aspectRatio = window.innerWidth / window.innerHeight;
         this.cameraControle.update(Camera.currentCamera); 
        
     }
 }
+
+const gameEntity = new GameEntity();
+gameEntity.addComponent(Camera);
+
+const meshRenderer = gameEntity.addComponent(MeshRenderer);
+console.log(meshRenderer)

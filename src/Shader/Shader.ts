@@ -1,8 +1,9 @@
-import EngineCache from "../Engine/Cache/EngineCache";
 import Mat4 from "../Engine/Core/Math/Mat4";
 import IShader from "./IShader";
 import ShaderUtil from "./Shader.Util";
 import Vec2 from "../Engine/Core/Math/Vec2";
+import Renderer from "../Engine/graphycs/Renderer";
+;
 
 export class Shader implements IShader {
     private vertSource: string = `
@@ -44,21 +45,13 @@ export class Shader implements IShader {
 
     `;
 
-    private gl: WebGL2RenderingContext;
+    private gl: WebGL2RenderingContext = Renderer.wegl2;
     private program: WebGLProgram | null;
 
     private attributeCache: Map<string, number> = new Map();
     private uniformCache: Map<string, WebGLUniformLocation> = new Map();
 
     private static currentProgram: WebGLProgram | null = null;
-
-    constructor() {
-        const gl = EngineCache.gl;
-        if (!gl) {
-            throw new Error("WebGL context não disponível.");
-        }
-        this.gl = gl;
-    }
 
    
     public setFragSource(source: string): void {

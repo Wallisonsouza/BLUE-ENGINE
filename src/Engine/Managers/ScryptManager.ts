@@ -1,4 +1,4 @@
-import MonoComportament from "../components/base_mono";
+import MonoComportament from "../components/MonoComportament";
 
 export default class ScryptManager {
 

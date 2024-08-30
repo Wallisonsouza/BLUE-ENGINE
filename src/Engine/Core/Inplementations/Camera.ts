@@ -1,17 +1,20 @@
 import Mat4 from "../Math/Mat4";
 import Color from "../../static/color";
-import { ICamera } from "../interfaces/ICamera";
 import Transform from "./Transform";
-import { Module } from "module";
+import Component from "../../components/Component";
 
-export default class Camera implements ICamera {
-    fieldOfView: number = 60;
-    transform: Transform = new Transform();
-    nearPlane: number = 0.03;
-    farPlane: number = 1000;
-    aspectRatio: number = 16 / 9;
-    depth: boolean = true;
-    clearColor: Color = Color.black;
+export default class Camera extends Component {
+   
+    public static currentCamera: Camera = new Camera();
+    public transform: Transform = new Transform();
+
+    public fieldOfView: number = 60;
+    public aspectRatio: number = 16 / 9;
+    public nearPlane: number = 0.03;
+    public farPlane: number = 1000;
+   
+    public depth: boolean = true;
+    public clearColor: Color = Color.black;
 
     getViewMatrix(): Mat4 {
         const position = this.transform.position;
@@ -30,8 +33,6 @@ export default class Camera implements ICamera {
         return Mat4.perspective(fov, aspect, near, far);
     }
 
-    public static currentCamera: Camera = new Camera();
-   
     // drawCameraGizmos(glLink: WebGLLink) {
     //     this.drawPerspectiveGizmos(glLink)
     // }

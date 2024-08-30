@@ -23,4 +23,17 @@ export default class Events {
             e.preventDefault();
         });
     }
+
+    public static addCanvasResize(canvas: HTMLCanvasElement){
+
+        window.addEventListener("resize", () => {
+            this.resize(canvas, window.innerWidth, window.innerHeight)
+        })
+        this.resize(canvas, window.innerWidth, window.innerHeight)
+    }
+
+    private static resize(canvas: HTMLCanvasElement, width: number, height: number){
+        canvas.width = width;
+        canvas.height = height;
+    }
 }

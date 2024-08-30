@@ -1,9 +1,8 @@
 import Color from "../../static/color";
 import Vec2 from "../Math/Vec2";
 import { Shader } from "../../../Shader/Shader";
-import EngineCache from "../../Cache/EngineCache";
 import { MaterialUtil } from "../../static/Util";
-
+import Renderer from "../../graphycs/Renderer";
 
 export class Material {
     
@@ -12,6 +11,8 @@ export class Material {
     public texture: WebGLTexture | null = null;
     public tiling: Vec2 = Vec2.one;
     public offset: Vec2 = Vec2.zero;
+
+    protected gl: WebGL2RenderingContext = Renderer.wegl2;
 
     public setTexture(src: string) {
         MaterialUtil.setTexture(this.texture, src);
@@ -67,7 +68,7 @@ export default class Material3D extends Material {
 
     setAlbedo(imageUrl: string): void {
 
-        const gl = EngineCache.gl;
+        const gl = this.gl;
         const newTexture = this.createTexture(gl, imageUrl);
         if (newTexture) {
             if (this.albedo) {
@@ -78,7 +79,7 @@ export default class Material3D extends Material {
     }
 
     setNormalMap(imageUrl: string){
-        const gl = EngineCache.gl;
+        const gl = this.gl;
         const newTexture = this.createTexture(gl, imageUrl);
         if (newTexture) {
             if (this.normalMap) {

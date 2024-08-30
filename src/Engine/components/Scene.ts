@@ -1,4 +1,4 @@
-import Hierarchy from "./static/hierarchy";
+import Hierarchy from "./hierarchy";
 
 export default class Scene {    
 

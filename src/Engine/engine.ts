@@ -2,8 +2,8 @@
 import ScryptManager from "./Managers/ScryptManager";
 import Time from "./static/Time";
 import Input from "./Input/Input";
-import EngineCache from "./Cache/EngineCache";
-import { Renderer } from "./graphycs/SpriteRenderer";
+import Renderer from "./graphycs/Renderer";
+
 
 export default class Engine {
     private time: Time;
@@ -13,7 +13,7 @@ export default class Engine {
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
 
-        let context: WebGLRenderingContext | null = canvas.getContext("webgl2");
+        let context: WebGLRenderingContext | WebGL2RenderingContext | null = canvas.getContext("webgl2");
 
         if (!context) {
             console.warn("API WebGL2 não disponível, tentando WebGL...");
@@ -27,12 +27,12 @@ export default class Engine {
                 console.log("Usando WebGL como alternativa.");
             }
         } else {
+
+            Renderer.wegl2 = context as WebGL2RenderingContext;
             console.log("Contexto WebGL2 obtido com sucesso.");
         }
         
-        EngineCache.gl = context;
-        Renderer.wegl2 = context;
-
+    
         this.time = new Time(
             this.awake.bind(this),
             this.start.bind(this),
@@ -42,11 +42,6 @@ export default class Engine {
             this.onDrawGizmos.bind(this),
             this.onGUI.bind(this)
         );
-
-        window.addEventListener("resize", () => {
-            this.resize(window.innerWidth, window.innerHeight)
-        })
-        this.resize(window.innerWidth, window.innerHeight)
     }
 
     public initialize(){
@@ -72,7 +67,7 @@ export default class Engine {
 
     private update(): void {
 
-        EngineCache.gl.viewport(0, 0, this.canvas.width, this.canvas.height)
+        Renderer.wegl2.viewport(0, 0, this.canvas.width, this.canvas.height)
         this.fp.innerText = Time.fps.toString() +"FPS " +"_____"+ window.innerWidth + "x" + window.innerHeight + "px"
         ScryptManager.update();
         Input.update();
@@ -99,22 +94,10 @@ export default class Engine {
     }   
    
     private onGUI() {
-        // TextDrawer.resetPosition();
-        // TextDrawer.drawText(`<style>{color: red, fontSize: 12}</style>Delta Time: ${Time.deltaTime}<style>{color: green}</style> ${Time.fps} FPS`);
-        // TextDrawer.drawText(`<style>{color: orange, fontSize: 12}</style>Fixed Delta Time: ${Time.fixedDeltaTime} <style>{color: green}</style> ${1/Time.fixedDeltaTime} FPS`);
-       
-        
-        // ScryptManager.onGUI();
-        // `
-        //     Fixed Delta Time: ${Time.fixedDeltaTime}[reset] 
-        //     and 
-        //     [green]
-        //     ${1/Time.fixedDeltaTime} FPS
-        // `
-    }
 
-    private resize(width: number, height: number){
-      this.canvas.width = width;
-      this.canvas.height = height;
     }
+       
+  
+
+ 
 }

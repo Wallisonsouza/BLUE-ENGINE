@@ -1,4 +1,6 @@
 import { MeshUtil } from "../static/Util";
+import Renderer from "./Renderer";
+
 
 export default class Mesh {
 
@@ -11,12 +13,14 @@ export default class Mesh {
     public indexBuffer: WebGLBuffer | null = null;
     public normalBuffer: WebGLBuffer | null = null;
     public UVBuffer: WebGLBuffer | null = null;
+
+    private gl: WebGL2RenderingContext = Renderer.wegl2;
     
-    public compile(gl: WebGLRenderingContext): void {
-        this.createVertexBuffer(gl);
-        this.createIndexBuffer(gl);
-        this.createNormalBuffer(gl);
-        this.createUVBuffer(gl);
+    public compile(): void {
+        this.createVertexBuffer(this.gl);
+        this.createIndexBuffer(this.gl);
+        this.createNormalBuffer(this.gl);
+        this.createUVBuffer(this.gl);
     }
 
     private createVertexBuffer(gl: WebGLRenderingContext): void {

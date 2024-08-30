@@ -1,4 +1,3 @@
-import EngineCache from "../Cache/EngineCache";
 import { BufferCreationError } from "./Error";
 
 export class MeshUtil {

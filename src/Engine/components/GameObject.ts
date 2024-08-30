@@ -1,4 +1,4 @@
-import Component from "../graphycs/Extension";
+import Component from "./Component";
 import List from "./List";
 
 export default class GameEntity {
@@ -15,7 +15,7 @@ export default class GameEntity {
         this.name = name || "GameObject";
         this.tag = tag || "Untagged";
         this.layer = layer || 0;
-        this.active = active ?? true; // Usa o operador de coalescência nula
+        this.active = active ?? true; 
     }
 
     /**

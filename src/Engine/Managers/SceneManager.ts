@@ -1,5 +1,4 @@
-import Scene from "../Scene";
-
+import Scene from "../components/Scene";
 
 /**
  * Gerencia as cenas dentro do motor de jogo, permitindo adicionar, remover, e trocar cenas.
