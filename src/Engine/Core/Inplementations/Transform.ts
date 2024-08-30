@@ -1,6 +1,6 @@
-import Mat4 from "../../graphycs/matrix4x4";
-import Quat from "../../graphycs/quat";
-import Vec3 from "../../graphycs/vec3";
+import Mat4 from "../Math/Mat4";
+import Quat from "../Math/quat";
+import Vec3 from "../Math/vec3";
 import { ITransform } from "../interfaces/ITransform";
 /**
  * Representa a transformação de um objeto no espaço 3D, incluindo sua posição, rotação e escala.
@@ -18,7 +18,7 @@ export default class Transform implements ITransform {
         return Quat.multiplyVec3(this.rotation, new Vec3(1, 0, 0));
     }
 
-    getLefttDirection(): Vec3 {
+    getLeftDirection(): Vec3 {
         return Quat.multiplyVec3(this.rotation, new Vec3(-1, 0, 0));
     }
     getBackwardDirection(): Vec3 {
@@ -26,7 +26,7 @@ export default class Transform implements ITransform {
     }
    
     getForwardDirection(): Vec3 {
-        return Quat.multiplyVec3(this.rotation, new Vec3(0, 0, 1));
+        return Quat.rotateVector(this.rotation, Vec3.forward);
     }
     getUpDirection(): Vec3 {
         return Quat.multiplyVec3(this.rotation, new Vec3(0, 1, 0));
@@ -50,4 +50,7 @@ export default class Transform implements ITransform {
         this.rotation.w = w;
     }
     
+    public rotateAxis(axis: Vec3): Vec3 {
+        return Quat.rotateVector(this.rotation, axis);
+    }
 }

@@ -1,4 +1,4 @@
-import Mat4 from "../../graphycs/matrix4x4";
+import Mat4 from "../Math/Mat4";
 import Transform from "../Inplementations/Transform";
 
 export interface ICamera {

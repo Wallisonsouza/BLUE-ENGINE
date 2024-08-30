@@ -12,7 +12,11 @@ export default class Time {
     private lastFpsTime: number = 0;
     public static fps: number = 0;
 
+    private initialized: boolean = false;
+
     constructor(
+        private readonly awakeCallback: () => void,
+        private readonly startCallback: () => void,
         private readonly updateCallback: () => void,
         private readonly fixedUpdateCallback: () => void,
         private readonly lateUpdateCallback: () => void,
@@ -21,11 +25,18 @@ export default class Time {
     ) {}
 
     public start(): void {
-        if (this.isRunning) return;
+        if (this.isRunning || this.initialized) return;
+
+        // Inicializa corretamente
+        this.awakeCallback(); 
+        this.startCallback();
+
+        this.initialized = true;
         this.isRunning = true;
         this.isPaused = false; 
         Time.time = performance.now();
         this.lastFpsTime = Time.time;
+
         this.loop();
     }
 
@@ -33,7 +44,6 @@ export default class Time {
         this.isRunning = false;
     }
 
-    
     public pause(): void {
         this.isPaused = true;
     }
@@ -47,7 +57,6 @@ export default class Time {
 
     public step(): void {
         if (!this.isPaused) return;
-
         this.processFrame();
     }
 
@@ -68,16 +77,21 @@ export default class Time {
         this.accumulator += Time.deltaTime;
         let steps = 0;
 
-        while (this.accumulator >= Time.fixedDeltaTime && steps < this.maxFrameSkip) {
-            this.fixedUpdateCallback();
-            this.accumulator -= Time.fixedDeltaTime;
-            steps++;
-        }
+        // Garantir que `FixedUpdate` seja chamado após `Start`
+        if (this.initialized) {
+            // Chama o FixedUpdate em intervalos fixos
+            while (this.accumulator >= Time.fixedDeltaTime && steps < this.maxFrameSkip) {
+                this.fixedUpdateCallback();
+                this.accumulator -= Time.fixedDeltaTime;
+                steps++;
+            }
 
-        this.updateCallback();
-        this.lateUpdateCallback();
-        this.onDrawGizmosCallback();
-        this.onGUICallback();
+            // Chama o Update uma vez por quadro
+            this.updateCallback();
+            this.lateUpdateCallback();
+            this.onDrawGizmosCallback();
+            this.onGUICallback();
+        }
 
         this.frameCount++;
         if (now - this.lastFpsTime >= 1000) {
