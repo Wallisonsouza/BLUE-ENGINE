@@ -1,7 +1,7 @@
 import { BufferCreationError } from "./Error";
 
 export class MeshUtil {
-    public static createVertexBuffer(gl: WebGLRenderingContext, vertices: Float32Array | null) {
+    public static createVertexBufferWebGl(gl: WebGLRenderingContext, vertices: Float32Array | null) {
         if (!vertices || vertices.length === 0) {
             throw new BufferCreationError("vértices", "O array de vértices está vazio ou não definido.");
         }
@@ -18,7 +18,7 @@ export class MeshUtil {
         return buffer;
     }
     
-    public static createIndexBuffer(gl: WebGLRenderingContext, indices: Uint16Array | null) {
+    public static createIndexBufferWebGl(gl: WebGLRenderingContext, indices: Uint16Array | null) {
         if (!indices || indices.length === 0) {
             throw new BufferCreationError("índices", "O array de índices está vazio ou não definido.");
         }
@@ -35,7 +35,7 @@ export class MeshUtil {
         return buffer;
     }
     
-    public static createNormalBuffer(gl: WebGLRenderingContext, normals: Float32Array | null) {
+    public static createNormalBufferWebGl(gl: WebGLRenderingContext, normals: Float32Array | null) {
         if (!normals || normals.length === 0) {
             throw new BufferCreationError("normais", "O array de normais está vazio ou não definido.");
         }
@@ -52,7 +52,7 @@ export class MeshUtil {
         return buffer;
     }
     
-    public static createUVBuffer(gl: WebGLRenderingContext, uvs: Float32Array | null) {
+    public static createUVBufferWebGl(gl: WebGLRenderingContext, uvs: Float32Array | null) {
         if (!uvs || uvs.length === 0) {
             throw new BufferCreationError("UVs", "O array de UVs está vazio ou não definido.");
         }
@@ -113,19 +113,17 @@ export class MeshUtil {
     // }
 }
 
-
 export class MaterialUtil {
 
-    // public static setTexture(target: WebGLTexture | null, src: string) {
-    //     const gl = EngineCache.gl;
-    //     const newTexture = this.createWebGlTexture(gl, src);
-    //     if (newTexture) {
-    //         if (target) {
-    //             gl.deleteTexture(target); 
-    //         }
-    //         target = newTexture;
-    //     }
-    // }
+    public static setTexture(gl: WebGL2RenderingContext, target: WebGLTexture | null, src: string) {
+        const newTexture = this.createWebGlTexture(gl, src);
+        if (newTexture) {
+            if (target) {
+                gl.deleteTexture(target); 
+            }
+            target = newTexture;
+        }
+    }
 
     // setNormalMap(imageUrl: string){
     //     const gl = EngineCache.gl;
@@ -178,49 +176,49 @@ export class MaterialUtil {
     //     this.offset = offset;
     // }
 
-    // public static createWebGlTexture(gl: WebGLRenderingContext, imageUrl: string): WebGLTexture | null {
-    //     const texture = gl.createTexture();
-    //     if (!texture) {
-    //         console.error("Não foi possível criar a textura.");
-    //         return null;
-    //     }
+    public static createWebGlTexture(gl: WebGLRenderingContext, imageUrl: string): WebGLTexture | null {
+        const texture = gl.createTexture();
+        if (!texture) {
+            console.error("Não foi possível criar a textura.");
+            return null;
+        }
         
-    //     gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
         
-    //     // Define parâmetros padrão para a textura
-    //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        // Define parâmetros padrão para a textura
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 
-    //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
        
         
-    //     // Carrega uma textura temporária
-    //     const level = 0;
-    //     const internalFormat = gl.RGBA;
-    //     const width = 256;
-    //     const height = 256;
-    //     const border = 0;
-    //     const format = gl.RGBA;
-    //     const type = gl.UNSIGNED_BYTE;
-    //     const pixels = new Uint8Array([0, 0, 255, 255]); // Textura sólida inicial
-    //     gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, format, type, pixels);
+        // Carrega uma textura temporária
+        const level = 0;
+        const internalFormat = gl.RGBA;
+        const width = 256;
+        const height = 256;
+        const border = 0;
+        const format = gl.RGBA;
+        const type = gl.UNSIGNED_BYTE;
+        const pixels = new Uint8Array([0, 0, 255, 255]); // Textura sólida inicial
+        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, format, type, pixels);
         
-    //     const image = new Image();
-    //     image.onload = () => {
-    //         gl.bindTexture(gl.TEXTURE_2D, texture);
-    //         gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, format, type, image);
-    //         gl.generateMipmap(gl.TEXTURE_2D);
-    //         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    //     };
+        const image = new Image();
+        image.onload = () => {
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, format, type, image);
+            gl.generateMipmap(gl.TEXTURE_2D);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        };
         
-    //     image.onerror = () => {
-    //         console.error(`Erro ao carregar a imagem: ${imageUrl}`);
-    //     };
+        image.onerror = () => {
+            console.error(`Erro ao carregar a imagem: ${imageUrl}`);
+        };
         
-    //     image.src = imageUrl;
+        image.src = imageUrl;
     
-    //     // Retorna a textura imediatamente, mesmo que a imagem não esteja carregada ainda
-    //     return texture;
-    // }
+        // Retorna a textura imediatamente, mesmo que a imagem não esteja carregada ainda
+        return texture;
+    }
 }

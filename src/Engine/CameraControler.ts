@@ -20,8 +20,6 @@ export default class CameraController {
     public minLerpFactor = 2;
 
     aceleration: boolean = true;
-
-
  
 
     public update(camera: Camera): void {

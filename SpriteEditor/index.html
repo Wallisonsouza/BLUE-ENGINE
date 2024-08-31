@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprite Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #sprite-editor, #animation-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #canvas, #animationCanvas {
+            border: 1px solid #000;
+            margin-top: 10px;
+            cursor: crosshair;
+        }
+
+        button, select, input {
+            margin-top: 10px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .dimension-inputs {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="sprite-editor">
+        <input type="file" id="fileInput" accept="image/*">
+        <select id="modeSelect">
+            <option value="auto">Detecção Automática</option>
+            <option value="specified">Divisão Especificada</option>
+        </select>
+        <div class="dimension-inputs" id="dimensionInputs">
+            <label for="spriteWidth">Largura do Sprite:</label>
+            <input type="number" id="spriteWidth" min="1">
+            <label for="spriteHeight">Altura do Sprite:</label>
+            <input type="number" id="spriteHeight" min="1">
+        </div>
+        <canvas id="canvas"></canvas>
+        <button id="exportButton">Exportar Sprites</button>
+    </div>
+
+    <div id="animation-section">
+        <button id="animateButton">Gerar Animação</button>
+        <canvas id="animationCanvas" width="300" height="300"></canvas>
+        <label for="speedControl">Velocidade da Animação:</label>
+        <input type="range" id="speedControl" min="1" max="60" value="10">
+        <span id="speedDisplay">10 FPS</span>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const modeSelect = document.getElementById('modeSelect');
+        const dimensionInputs = document.getElementById('dimensionInputs');
+        const spriteWidthInput = document.getElementById('spriteWidth');
+        const spriteHeightInput = document.getElementById('spriteHeight');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const exportButton = document.getElementById('exportButton');
+        const animateButton = document.getElementById('animateButton');
+        const animationCanvas = document.getElementById('animationCanvas');
+        const animationContext = animationCanvas.getContext('2d');
+        const speedControl = document.getElementById('speedControl');
+        const speedDisplay = document.getElementById('speedDisplay');
+
+    let animationInterval;
+    let speed = 10;
+
+    speedControl.addEventListener('input', () => {
+        speed = parseInt(speedControl.value);
+        speedDisplay.textContent = `${speed} FPS`;
+        // Reiniciar a animação com a nova velocidade
+        if (animationInterval) clearInterval(animationInterval);
+        if (sprites.length > 0) {
+            startAnimation();
+        }
+    });
+
+        let image = new Image();
+        let sprites = [];
+        let animationFrame = 0;
+
+        modeSelect.addEventListener('change', () => {
+            const mode = modeSelect.value;
+            dimensionInputs.style.display = (mode === 'specified') ? 'block' : 'none';
+            detectSprites(); // Atualiza os cortes quando o modo é alterado
+        });
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                image.src = e.target.result;
+                image.onload = () => {
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    context.drawImage(image, 0, 0);
+                    sprites = []; // Limpa a lista de sprites anteriores
+                    detectSprites();
+                };
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        exportButton.addEventListener('click', () => {
+            const json = JSON.stringify(sprites, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sprites.json';
+            a.click();
+        });
+
+        animateButton.addEventListener('click', () => {
+            if (sprites.length > 0) {
+                animationFrame = 0; // Reset animation frame
+                animateSprites();
+            }
+        });
+
+        spriteWidthInput.addEventListener('input', detectSprites);
+        spriteHeightInput.addEventListener('input', detectSprites);
+
+        function detectSprites() {
+            sprites = []; // Limpa a lista de sprites
+            context.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
+            context.drawImage(image, 0, 0); // Redesenha a imagem de fundo
+            const mode = modeSelect.value;
+            if (mode === 'auto') {
+                detectSpritesAutomatically();
+            } else {
+                const spriteWidth = parseInt(spriteWidthInput.value);
+                const spriteHeight = parseInt(spriteHeightInput.value);
+                if (spriteWidth > 0 && spriteHeight > 0) {
+                    detectSpritesSpecified(spriteWidth, spriteHeight);
+                }
+            }
+        }
+
+        function detectSpritesAutomatically() {
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            const visited = new Array(canvas.width * canvas.height).fill(false);
+
+            function getIndex(x, y) {
+                return (y * canvas.width + x) * 4;
+            }
+
+            function isTransparent(x, y) {
+                return pixels[getIndex(x, y) + 3] === 0;
+            }
+
+            function floodFill(x, y) {
+                const queue = [[x, y]];
+                const bounds = { left: x, right: x, top: y, bottom: y };
+
+                while (queue.length > 0) {
+                    const [cx, cy] = queue.shift();
+                    const index = cy * canvas.width + cx;
+
+                    if (visited[index] || isTransparent(cx, cy)) continue;
+
+                    visited[index] = true;
+                    bounds.left = Math.min(bounds.left, cx);
+                    bounds.right = Math.max(bounds.right, cx);
+                    bounds.top = Math.min(bounds.top, cy);
+                    bounds.bottom = Math.max(bounds.bottom, cy);
+
+                    if (cx > 0) queue.push([cx - 1, cy]);
+                    if (cx < canvas.width - 1) queue.push([cx + 1, cy]);
+                    if (cy > 0) queue.push([cx, cy - 1]);
+                    if (cy < canvas.height - 1) queue.push([cx, cy + 1]);
+                }
+
+                return bounds;
+            }
+
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    if (!visited[y * canvas.width + x] && !isTransparent(x, y)) {
+                        const bounds = floodFill(x, y);
+                        const sprite = {
+                            x: bounds.left,
+                            y: bounds.top,
+                            width: bounds.right - bounds.left + 1,
+                            height: bounds.bottom - bounds.top + 1,
+                        };
+                        sprites.push(sprite);
+                        drawRect(sprite.x, sprite.y, sprite.x + sprite.width, sprite.y + sprite.height);
+                    }
+                }
+            }
+        }
+
+        function detectSpritesSpecified(spriteWidth, spriteHeight) {
+            for (let y = 0; y < canvas.height; y += spriteHeight) {
+                for (let x = 0; x < canvas.width; x += spriteWidth) {
+                    const sprite = {
+                        x: x,
+                        y: y,
+                        width: spriteWidth,
+                        height: spriteHeight,
+                    };
+                    sprites.push(sprite);
+                    drawRect(sprite.x, sprite.y, sprite.x + sprite.width, sprite.y + sprite.height);
+                }
+            }
+        }
+
+        function drawRect(x1, y1, x2, y2) {
+            context.beginPath();
+            context.rect(x1, y1, x2 - x1, y2 - y1);
+            context.strokeStyle = 'red';
+            context.lineWidth = 2;
+            context.stroke();
+        }
+
+        function animateSprites() {
+            if (sprites.length === 0) return;
+
+            const sprite = sprites[animationFrame % sprites.length];
+            animationContext.clearRect(0, 0, animationCanvas.width, animationCanvas.height);
+            animationContext.drawImage(
+                image,
+                sprite.x, sprite.y, sprite.width, sprite.height,
+                0, 0, animationCanvas.width, animationCanvas.height
+            );
+
+            animationFrame++;
+        }
+
+        function startAnimation() {
+            animationInterval = setInterval(animateSprites, 1000 / speed);
+        }
+
+        animateButton.addEventListener('click', () => {
+            if (sprites.length > 0) {
+                animationFrame = 0; // Reset animation frame
+                startAnimation();
+            }
+        });
+    </script>
+</body>
+</html>

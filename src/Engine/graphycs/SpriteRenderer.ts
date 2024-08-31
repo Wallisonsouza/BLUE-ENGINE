@@ -1,101 +1,95 @@
-import Component from "../components/Component";
+import Mesh from "./Mesh";
+import Camera from "../Core/Inplementations/Camera";
+import Transform from "../Core/Inplementations/Transform";
 import { Material2D } from "../Core/Inplementations/Material";
-
-export class Renderer extends Component {
-    public static wegl2: WebGL2RenderingContext;
-}
+import Renderer from "./Renderer";
+import MeshBuilder from "./MeshBuilder";
 
 export default class SpriteRenderer extends Renderer {
-    public material2D: Material2D = new Material2D;
-}
 
-export class Texture2D {
-    private gl: WebGL2RenderingContext;
-    private texture: WebGLTexture | null = null;
-    private width: number = 0;
-    private height: number = 0;
+    public transform: Transform = new Transform();
+    public sprite: Sprite | null = null;
+    public material: Material2D | null = null;
+    public renderMode: RenderMode = RenderMode.SOLID;
+    private gl: WebGL2RenderingContext = Renderer.wegl2;
+    
 
-    constructor(gl: WebGL2RenderingContext) {
-        this.gl = gl;
-        this.texture = this.gl.createTexture();
+    public render(): void {
+        this.renderScene();
+        this.transform.drawGizmos();
     }
+    
+    private renderScene() {
+        const camera = Camera.currentCamera;
 
-    public loadFromPath(path: string): Promise<void> {
-        return new Promise((resolve, reject) => {
-            const image = new Image();
-            image.src = path;
-            image.onload = () => {
-                this.loadFromImage(image);
-                resolve();
-            };
-            image.onerror = (err) => {
-                console.error(`Failed to load texture from path: ${path}`, err);
-                reject(err);
-            };
-        });
-    }
+        if (!camera || !this.sprite || !this.material) return;
+    
+        // Configure o shader da cena
+        this.material.shader.use();
+      
+        // Defina as propriedades e as matrizes no shader
+        const projection = camera.getProjectionMatrix();
+        const view = camera.getViewMatrix();
+        const model = this.transform.getModelMatrix();
+    
+        this.material.shader.setUniformMatrix4fv("uModel", model);
+        this.material.shader.setUniformMatrix4fv("uView", view);
+        this.material.shader.setUniformMatrix4fv("uProjection", projection);
+    
+        // Configure os buffers e atributos
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sprite.mesh.vertexBuffer);
+        this.material.shader.enableAttribute3f(this.gl, "aPosition");
+    
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sprite.mesh.UVBuffer);
+        this.material.shader.enableAttribute2f(this.gl, "aTexCoord");
+   
+        if (this.material.texture) {
+            this.gl.activeTexture(this.gl.TEXTURE0);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, this.material.texture);
+            this.material.shader.setUniform1i("uTexture", 0);
+        } 
+    
+        const [x, y, z, w] = this.material.color.toVec4();
+        this.material.shader.setUniform4f("uColor", x, y, z, w);
 
-    // Método para carregar a textura a partir de uma imagem
-    private loadFromImage(image: HTMLImageElement) {
-        if (!this.texture) {
-            console.error("Failed to create WebGL texture.");
-            return;
-        }
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
-        this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
-        this.gl.texImage2D(
-            this.gl.TEXTURE_2D,
-            0,
-            this.gl.RGBA,
-            this.gl.RGBA,
-            this.gl.UNSIGNED_BYTE,
-            image
-        );
-
-        this.gl.generateMipmap(this.gl.TEXTURE_2D);
-
-        this.width = image.width;
-        this.height = image.height;
-
-        // Configurar parâmetros de textura
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_LINEAR);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
-
+        this.gl.enable(this.gl.DEPTH_TEST);
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.sprite.mesh.indexBuffer);
+        
+        this.gl.drawElements(this.gl.TRIANGLES, this.sprite.mesh.triangles.length, this.gl.UNSIGNED_SHORT, 0);
+    
+        // Limpeza
+        this.material.shader.disableAttribute(this.gl, "aPosition");
+        this.material.shader.disableAttribute(this.gl, "aTexCoord");
+    
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
+    
+        this.gl.activeTexture(this.gl.TEXTURE0);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+        this.gl.activeTexture(this.gl.TEXTURE1);
         this.gl.bindTexture(this.gl.TEXTURE_2D, null);
     }
-
-    // Método para bind da textura
-    public bind(slot: number = 0) {
-        if (!this.texture) {
-            console.error("No texture to bind.");
-            return;
-        }
-
-        this.gl.activeTexture(this.gl.TEXTURE0 + slot);
-        this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
-    }
-
-    // Método para desativar o bind da textura
-    public unbind() {
-        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-    }
-
-    public getTexture(): WebGLTexture | null {
-        return this.texture;
-    }
-
-    public getWidth(): number {
-        return this.width;
-    }
-
-    public getHeight(): number {
-        return this.height;
-    }
 }
-
 
 export class Sprite {
+    public mesh: Mesh;
+    constructor(){
+        this.mesh = MeshBuilder.createSquare();
+        this.mesh.compile();
+    }
+}
 
+/**
+ * Enum para representar os modos de renderização.
+ */
+export enum RenderMode {
+    TEXTURED = "TEXTURED",
+    SOLID = "SOLID",
+    WIREFRAME = "WIREFRAME",
+    SHADED = "SHADED",
+    ADVANCED = "ADVANCED",
+    SOLID_WIRE = "SOLIDWIRE"
 }

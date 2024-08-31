@@ -1,16 +1,14 @@
 import CameraController from "./Engine/CameraControler";
 import MonoComportament from "./Engine/components/MonoComportament";
-import Material3D from "./Engine/Core/Inplementations/Material";
+import Material3D, { Material2D } from "./Engine/Core/Inplementations/Material";
 import Mesh from "./Engine/graphycs/Mesh";
 import MeshBuilder from "./Engine/graphycs/MeshBuilder";
 import Camera from "./Engine/Core/Inplementations/Camera";
 import HDRLoader from "../plugins/hdr-loader/hdrLoader";
-import GameEntity from "./Engine/components/GameObject";
 import Renderer from "./Engine/graphycs/Renderer";
 import MeshRenderer from "./Engine/graphycs/MeshRenderer";
-import Quat from "./Engine/Core/Math/Quat";
-import Vec3 from "./Engine/Core/Math/Vec3";
-import Time from "./Engine/static/Time";
+import CameraManager from "./Engine/CameraManager";
+import SpriteRenderer, { Sprite } from "./Engine/graphycs/SpriteRenderer";
 
 export default class SimpleEngine extends MonoComportament {
 
@@ -21,10 +19,7 @@ export default class SimpleEngine extends MonoComportament {
     texture: WebGLTexture;
 
     skyDome: Mesh;
-
-    cubeMeshRenderer: MeshRenderer;
-    cubeMesh: Mesh;
-
+    spriteRenderer: SpriteRenderer;
 
     public async loadResources() {
         try {
@@ -40,9 +35,12 @@ export default class SimpleEngine extends MonoComportament {
     }
 
     public start(): void {
-        
+
         Camera.editorCamera.invert = true;
         Camera.currentCamera.farPlane = 2000;
+        new CameraManager(Camera.editorCamera);
+   
+
         this.skyDome = MeshBuilder.createSphere(100, 64, 64);
         this.skyDome.compile(); 
     
@@ -54,22 +52,26 @@ export default class SimpleEngine extends MonoComportament {
         this.meshRenderer.material = this.material;
 
         //-------------------------------------------------------------
-        this.cubeMesh = MeshBuilder.createSquare();
-        this.cubeMesh.compile();
-        const cubeMaterial = new Material3D();
-        this.cubeMeshRenderer = new MeshRenderer();
-        this.cubeMeshRenderer.setMesh(this.cubeMesh);
-        this.cubeMeshRenderer.material = cubeMaterial;
-        this.cubeMeshRenderer.transform.position = new Vec3(0, 0, 2)
-        cubeMaterial.setAlbedo("./src/Engine/Assets/2D/Textures/pngegg.png");
+        
+
+        const materia2D = new Material2D();
+        materia2D.setTexture("./src/Engine/Assets/2D/Textures/pngegg.png");
+
+        const sprite = new Sprite();
+        const spriteRenderer = new SpriteRenderer();
+
+        this.spriteRenderer = spriteRenderer;
+        this.spriteRenderer.sprite = sprite;
+        this.spriteRenderer.material = materia2D;
+     
         // cubeMaterial.setNormalMap("./Assets/textures/normalMap.png");
         // this.skyBox = new Skybox(this.texture, this.camera);
     }
 
     public update(): void { 
 
-        this.meshRenderer.render();
-        this.cubeMeshRenderer.render();
+        // this.meshRenderer.render();
+        this.spriteRenderer.render();
         
         const aspect = window.innerWidth / window.innerHeight;
         Camera.currentCamera.aspectRatio = aspect;

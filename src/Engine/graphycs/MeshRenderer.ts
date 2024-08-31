@@ -85,8 +85,6 @@ export default class MeshRenderer extends Renderer {
         this.gl.activeTexture(this.gl.TEXTURE1);
         this.gl.bindTexture(this.gl.TEXTURE_2D, null);
     }
-
-   
 }
 
 /**

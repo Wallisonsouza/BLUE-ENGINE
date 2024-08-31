@@ -107,5 +107,30 @@ export default class Camera extends Component implements IGizmoRenderable {
         Gizmos.drawLine(corners[3], corners[2]); 
         Gizmos.drawLine(corners[2], corners[0]);
     }
+
+
+    public setFov(value: number){
+        this.fieldOfView = value;
+    }
+
+    public setFar(value: number){
+        this.farPlane = value;
+    }
+
+    public setNear(value: number){
+        this.nearPlane = value;
+    }
+
+    public getFov(){
+        return this.fieldOfView;
+    }
+
+    public getFar(){
+        return this.farPlane;
+    }
+
+    public getNear(){
+        return this.nearPlane;
+    }
     
 }
